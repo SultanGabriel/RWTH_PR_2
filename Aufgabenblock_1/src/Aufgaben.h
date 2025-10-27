@@ -15,6 +15,10 @@
 
 static const int ANZAHL_AUFGABEN = 1;
 
-void vAufgabe_1();
+void vAufgabe1();
+void vRunSimulation1_8(); // unteraufgabe 8
+
+
+void vAufgabe1a();
 
 #endif /* AUFGABEN_H_ */
