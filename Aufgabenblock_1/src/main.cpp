@@ -12,22 +12,24 @@
 #include "Aufgaben.h"
 #include "Utils.h"
 
-void vRunSimulation_8();
 
 double dGlobaleZeit = 0.0;
 
 
 int main() {
-	int iTestIndex = 1;
-
 	std::cout << "====== The application is initializing ======" << std::endl;
 
 
+	std::unique_ptr<Fahrzeug> pFzg = std::make_unique<Fahrzeug>("audi", 12);
 
-//	vRunSimulation_8();
-	vAufgabe1a();
+//	vAufgabe1();
+//	vAufgabe1a();
+//	vRunSimulation1_8();
+//	vAufgabe2();
+//	vAufgabe3();
 
 
+	vAufgabe_AB1();
 
 	std::cout << "====== The application is shutting down ======" << std::endl;
 	std::cout << "====== See you next time! ======" << std::endl;

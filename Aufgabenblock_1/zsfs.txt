@@ -1,0 +1,1127 @@
+📁 Project Structure (depth ≤ 2)
+--------------------------------
+./
+├── Debug
+│   ├── Aufgabenblock1.exe
+│   └── src
+├── src
+│   ├── Aufgaben.cpp
+│   ├── Aufgaben.h
+│   ├── Fahrrad.cpp
+│   ├── Fahrrad.h
+│   ├── Fahrzeug.cpp
+│   ├── Fahrzeug.h
+│   ├── Logger.h
+│   ├── main.cpp
+│   ├── PKW.cpp
+│   ├── PKW.h
+│   ├── Utils.cpp
+│   └── Utils.h
+├── todo.md
+└── zsfs.txt
+
+4 directories, 15 files
+
+
+============================================
+
+/* ============================================ */
+/* File: ./src/Aufgaben.cpp */
+/* ============================================ */
+
+/*
+ * Aufgaben.cpp
+ *
+ *  Created on: 23 Oct 2025
+ *      Author: sulta
+ */
+
+#include "Aufgaben.h"
+
+void vAufgabe1() {
+	// Print a newline at the start of the exercise
+	std::cout << std::endl << "====        Aufgabe 1        ====" << std::endl;
+//	logExeciseTitle("Aufgabe 1");
+
+// Statische Objekte
+	Fahrzeug f1("BMW");
+	Fahrzeug f2("Audi");
+
+	// Dynamische Objekte
+	Fahrzeug *pF3 = new Fahrzeug("Mercedes");
+	Fahrzeug *pF4 = new Fahrzeug("VW");
+
+	// Nutzung der Objekte
+	std::cout << "Statisches Fahrzeug 1: " << f1.getName() << std::endl;
+	std::cout << "Statisches Fahrzeug 2: " << f2.getName() << std::endl;
+
+	std::cout << "Dynamisches Fahrzeug 1: " << pF3->getName() << std::endl;
+	std::cout << "Dynamisches Fahrzeug 2: " << pF4->getName() << std::endl;
+
+	// Speicher wieder freigeben
+	delete pF3;
+	delete pF4;
+
+	// Smart Pointer (unique_ptr)
+	auto uF1 = std::make_unique<Fahrzeug>("Tesla");
+	auto uF2 = std::make_unique<Fahrzeug>("Volvo");
+	auto uF3 = std::make_unique<Fahrzeug>("Dacia");
+
+	// Smart Pointer (shared_ptr)
+	auto sF1 = std::make_shared<Fahrzeug>("Porsche");
+	auto sF2 = std::make_shared<Fahrzeug>("Ferrari");
+
+	std::cout << "use_count vor Zuweisung: sF1=" << sF1.use_count() << ", sF2="
+			<< sF2.use_count() << std::endl;
+
+	std::shared_ptr<Fahrzeug> sF3 = sF1; // Referenz teilen
+
+	std::cout << "use_count nach Zuweisung: sF1=" << sF1.use_count() << ", sF3="
+			<< sF3.use_count() << std::endl;
+
+	std::cout << "Versuch Besitzübertrag mit unique_ptr" << std::endl;
+
+	// unique_ptr kann NICHT kopiert werden, nur per move übertragen
+	// auto uF4 = uF1; // Fehler, da ein uniquie_ptr nicht "kopiert" werden kann
+	auto uF4 = move(uF1);
+	if (!uF1) {
+		std::cout << "uF1 ist nach move leer, Besitz liegt bei uF3."
+				<< std::endl;
+	}
+
+	std::cout << "Versuch vector<unique_ptr<Fahrzeug>>" << std::endl;
+	/*
+	 * In dem Vektor können die Fahrzeuge, die mt unique_ptr erstellt wurden
+	 * gespeichert werden. Die Besitzübertragung muss per move() stattfinden
+	 *
+	 */
+	std::vector<std::unique_ptr<Fahrzeug>> vecUnique;
+
+	vecUnique.push_back(move(uF2)); // Besitzübertragung per move
+	vecUnique.push_back(move(uF3)); // Besitzübertragung per move
+	vecUnique.push_back(move(uF4)); // Besitzübertragung per move
+
+	std::cout << "Vektor mit unique_ptr enthält Fahrzeuge." << std::endl;
+	std::cout << "Anzahl Fahrzeuge: " << vecUnique.size() << std::endl;
+	std::cout << "Der Verktor wird jetzt gelöscht..." << std::endl;
+
+	vAusgabeTabelle(vecUnique);
+
+	vecUnique.clear(); // löscht alle Objekte
+
+	/*
+	 * In dem Vektor können die Fahrzeuge, die mt shared_ptr erstellt wurden
+	 * gespeichert werden. Die Besitzübertragung kann per move() stattfinden,
+	 * funktioniert aber auch ohne, dabei wird aber der use_count des pointers
+	 * inkrementiert.
+	 */
+	std::cout << "vector<shared_ptr<Fahrzeug>>" << std::endl;
+	std::vector<std::shared_ptr<Fahrzeug>> vecShared;
+
+	// Beide Varianten erlaubt: mit und ohne move
+	vecShared.push_back(sF1);        // Kopiem use_count++
+	vecShared.push_back(move(sF2)); // Besitzübertragung, move ist optional bei shared_ptr
+
+	std::cout << "use_count sF1: " << sF1.use_count() << std::endl;
+	std::cout << "use_count sF2 (nach move): " << sF2.use_count()
+			<< " (sollte 0 sein)" << std::endl;
+	vAusgabeTabelle(vecShared);
+
+	vecShared.clear(); // shared_ptrs im Vector werden zerstört
+
+	std::cout << "====     ENDE: Aufgabe 1     ====" << std::endl;
+}
+
+void vRunSimulation1_8() {
+
+	std::vector<std::unique_ptr<Fahrzeug>> fahrzeuge;
+	fahrzeuge.push_back(std::make_unique<Fahrzeug>("BMW", 50));
+	fahrzeuge.push_back(std::make_unique<Fahrzeug>("Audi", 70));
+
+	for (int i = 0; i < 5; ++i) {
+		dGlobaleZeit += 0.5; // 0.5 Stunden Schritte
+		for (auto &f : fahrzeuge) {
+			f->vSimulieren();
+		}
+
+		std::cout << "Zeit: " << dGlobaleZeit << "h" << std::endl;
+
+		vAusgabeTabelle(fahrzeuge);
+
+		std::cout << std::endl << std::endl;
+	}
+
+}
+
+void vAufgabe1a() {
+	std::vector<std::unique_ptr<Fahrzeug>> fahrzeuge;
+
+	// Eingabe von 3 Fahrzeugen
+	for (int i = 0; i < 3; ++i) {
+		std::string name = inputString(
+				"Name des Fahrzeugs #" + std::to_string(i + 1) + ": ");
+
+		double vmax = inputInt("Maximale Geschwindigkeit [km/h]: ");
+		fahrzeuge.push_back(std::make_unique<Fahrzeug>(name, vmax));
+	}
+
+	// Simulationseinstellungen
+	double dEndzeit = inputDouble("Endzeit der Simulation [h]: ");
+	double dDelta = inputDouble("Zeittakt [h]: ");
+
+	// Simulationsschleife
+	while (dGlobaleZeit < dEndzeit) {
+		dGlobaleZeit += dDelta;
+
+		// Jedes Fahrzeug simulieren
+		for (auto &f : fahrzeuge) {
+			f->vSimulieren();
+		}
+
+		std::cout << std::endl << "Zeit: " << std::fixed << std::setprecision(2)
+				<< dGlobaleZeit << "h" << std::endl;
+
+		vAusgabeTabelle(fahrzeuge);
+
+		std::cout << std::endl; // extra newline nach der aufgabe
+
+		// Hard break if dDelta is set to 0, then run only one simulation
+		if (dDelta == 0) {
+			return;
+
+		}
+	}
+}
+
+//Schreiben Sie eine neue Funktion vAufgabe 2(): Lesen Sie die Anzahl der zu erzeu-
+//genden PKWs und Fahrr¨ader aus der Konsole ein, konstruieren Sie entsprechende
+//Objekte der Klassen PKW und Fahrrad und verwalten Sie sie in einem
+//vector<unique ptr<Fahrzeug>>. Warum k¨onnen/sollten Sie keine Fahrzeugob-
+//jekte speichern? Warum k¨onnen Sie PKWs und Fahrr¨ader in einem gemeinsamen
+//Vektor speichern?
+//F¨uhren Sie f¨ur diese Objekte mehrere Simulationsschritte durch. Nach genau 3
+//Stunden tanken Sie die PKWs nochmals voll. Die Zeitabfrage dazu soll im Testpro-
+//gramm erfolgen, nicht innerhalb von dTanken(). Testen Sie dies mit verschiedenen
+//Zeittakten. Geben Sie die Ergebnisse (Daten aller Fahrzeuge) nach jedem Schritt
+//aus.
+//Beachte: Gleichheit von double-Werten kann immer nur gegen eine Toleranz ϵ
+//getestet werden, da Fließkomma-Berechnungen nicht komplett genau sind. Berech-
+//nen Sie dazu z.B. den Absolutbetrag der Differenz bei Gleichheit oder reduzieren
+//Sie eine der Seiten des Vergleichs um ϵ bei ≥ oder ≤. Die Funktion f¨ur den Ab-
+//solutbetrag std::fabs() finden Sie in der Bibliothek <cmath>. Beachten Sie dieses
+//Rundungsproblem bei allen weiteren Vergleichen zwischen Fließkomma-Werten.
+void vAufgabe2() {
+	std::vector<std::unique_ptr<Fahrzeug>> fahrzeuge;
+
+	int iAnzahlPKW = inputInt("Anzahl PKW: ");
+	int iAnzahlFahrrad = inputInt("Anzahl Fahrrad: ");
+
+	bool bAutoGen = bInputConfirmation(
+			"Sollen die Fahrzeuge automatisch generiert werden?");
+
+	// PKWs
+	for (int i = 0; i < iAnzahlPKW; ++i) {
+		if (bAutoGen) {
+			std::string name = zufaelligerFahrzeugName();
+			double vmax = 100 + std::rand() % 101;    // 100–200 km/h
+			double verbrauch = 5 + std::rand() % 6;   // 5–10 L/100 km
+			fahrzeuge.push_back(
+					std::make_unique<PKW>(name, vmax, verbrauch, 40));
+		} else {
+			fahrzeuge.push_back(pkwInput());
+		}
+	}
+
+	// Fahrräder
+	for (int i = 0; i < iAnzahlFahrrad; ++i) {
+		if (bAutoGen) {
+			std::string name = "Fahrrad #" + std::to_string(i);
+			double vmax = 20 + std::rand() % 11; // 20–30 km/h
+
+			fahrzeuge.push_back(std::make_unique<Fahrrad>(name, vmax));
+		} else {
+			fahrzeuge.push_back(fahrradInput());
+		}
+	}
+
+	double dEnd = inputDouble("Endzeit [h]: ");
+	double dStep = inputDouble("Zeitschritt [h]: ");
+	while (dGlobaleZeit < dEnd) {
+		dGlobaleZeit += dStep;
+
+		for (auto &f : fahrzeuge)
+			f->vSimulieren();
+
+		std::cout << std::endl << "Zeit: " << std::fixed << std::setprecision(2)
+				<< dGlobaleZeit << " h" << std::endl;
+
+		// Tankvorgang nach genau 3 h
+		if (nearlyEqual(std::fmod(dGlobaleZeit, 3.0), 0.0)) {
+			std::cout << "Tanke alle PKWs voll!" << std::endl;
+			for (auto &f : fahrzeuge)
+				f->dTanken();
+		}
+
+		vAusgabeTabelle(fahrzeuge);
+	}
+
+	std::cout << "=== Simulation beendet ===" << std::endl;
+}
+
+void vAufgabe3() {
+
+    PKW pkw1("Audi", 180, 8);
+    PKW pkw2("BMW", 200, 10);
+    Fahrrad bike("Canyon", 28);
+
+    std::cout << std::endl;
+    Fahrzeug::vKopf();
+    std::cout << pkw1 << std::endl
+              << pkw2 << std::endl
+              << bike << std::endl;
+    // minimal simulieren, um Vergleich zu demonstrieren
+    dGlobaleZeit = 1.0;
+    pkw1.vSimulieren();
+    dGlobaleZeit = 2.0;
+    pkw2.vSimulieren();
+
+    // Ausgabeoperator
+    std::cout << std::endl;
+    Fahrzeug::vKopf();
+    std::cout << pkw1 << std::endl
+              << pkw2 << std::endl
+              << bike << std::endl;
+
+    // Vergleich
+    if (pkw1 < pkw2)
+        std::cout << "pkw1 ist langsamer (weniger Strecke) als pkw2" << std::endl;
+
+    // Copy-Konstruktor verboten (prüfbar per Compiler-Fehler)
+    // Fahrzeug f2 = f1; // ❌ sollte nicht kompilieren
+
+    // Zuweisung
+    PKW pkw3("VW", 160, 7);
+    pkw3 = pkw1;
+    std::cout << "Nach Zuweisung: " << pkw3 << std::endl;
+	std::cout << "=== Simulation beendet ===" << std::endl;
+}
+
+
+
+/* ============================================ */
+/* File: ./src/Aufgaben.h */
+/* ============================================ */
+
+/*
+ * Aufgaben.h
+ *
+ *  Created on: 23 Oct 2025
+ *      Author: sulta
+ */
+
+#ifndef AUFGABEN_H_
+#define AUFGABEN_H_
+
+#include "Fahrzeug.h"
+#include "Logger.h"
+#include "Utils.h"
+
+#include <iostream>
+#include <memory>       // für smart pointer
+#include <vector>       // für std::vector
+
+
+static const int ANZAHL_AUFGABEN = 1;
+
+void vAufgabe1();
+void vRunSimulation1_8(); // unteraufgabe 8
+void vAufgabe2();
+void vAufgabe3();
+
+
+void vAufgabe1a();
+
+#endif /* AUFGABEN_H_ */
+
+
+
+/* ============================================ */
+/* File: ./src/Fahrrad.cpp */
+/* ============================================ */
+
+/*
+ * Fahrrad.cpp
+ *
+ *  Created on: 27 Oct 2025
+ *      Author: sulta
+ */
+
+
+
+
+#include "Fahrrad.h"
+
+double Fahrrad::dGeschwindigkeit() const {
+    double factor = std::pow(0.9, (p_dGesamtStrecke / 20.0));
+    double v = p_dMaxGeschwindigkeit * factor;
+    return std::max(v, 12.0);
+}
+
+void Fahrrad::vAusgeben(std::ostream& os) const {
+    Fahrzeug::vAusgeben(os);
+    os << std::setw(15) << std::fixed << std::setprecision(2) << dGeschwindigkeit();
+}
+
+
+void Fahrrad::vKopf() {
+    Fahrzeug::vKopf(); // print base part
+    std::cout << std::setw(15) << "Geschwindigkeit"
+              << std::endl
+              << std::setfill('-') << std::setw(80) << "-" << std::setfill(' ')
+              << std::endl;
+}
+
+
+
+/* ============================================ */
+/* File: ./src/Fahrrad.h */
+/* ============================================ */
+
+/*
+ * Fahrrad.h
+ *
+ *  Created on: 27 Oct 2025
+ *      Author: sulta
+ */
+
+#ifndef FAHRRAD_H_
+#define FAHRRAD_H_
+
+#include <cmath>
+#include <iomanip>
+
+#include "Fahrzeug.h"
+
+class Fahrrad: public Fahrzeug {
+public:
+	Fahrrad(const std::string &name, double vmax) :
+			Fahrzeug(name, vmax) {
+	}
+	virtual ~Fahrrad() override {
+	}
+
+	double dGeschwindigkeit() const override;
+	void vSimulieren() override {
+		Fahrzeug::vSimulieren();
+	}
+	void vAusgeben(std::ostream &os = std::cout) const override;
+	static void vKopf();
+};
+
+#endif /* FAHRRAD_H_ */
+
+
+
+/* ============================================ */
+/* File: ./src/Fahrzeug.cpp */
+/* ============================================ */
+
+/*
+ * Fahrzeug.cpp
+ *
+ *  Created on: 22 Oct 2025
+ *      Author: sulta
+ */
+
+#include "Fahrzeug.h"
+
+// Initialisierung der statischen Klassenvariable
+int Fahrzeug::p_iMaxID = 0;
+
+// Konstruktoren
+Fahrzeug::Fahrzeug() :
+				p_sName(""),
+					p_iID(++p_iMaxID),
+					p_dMaxGeschwindigkeit(0),
+					p_dGesamtStrecke(0),
+					p_dGesamtZeit(0),
+					p_dZeit(0) {
+}
+
+Fahrzeug::Fahrzeug(const std::string &name) :
+				p_sName(name),
+					p_iID(++p_iMaxID),
+					p_dMaxGeschwindigkeit(0),
+					p_dGesamtStrecke(0),
+					p_dGesamtZeit(0),
+					p_dZeit(0) {
+}
+
+Fahrzeug::Fahrzeug(const std::string &name, const double maxGeschw) :
+				p_sName(name),
+					p_iID(++p_iMaxID),
+					p_dMaxGeschwindigkeit(maxGeschw),
+					p_dGesamtStrecke(0),
+					p_dGesamtZeit(0),
+					p_dZeit(0) {
+	std::cout << "Fahrzeug erzeugt: Name=\"" << p_sName << "\", ID=" << p_iID
+			<< std::endl;
+	if (maxGeschw <= 0.0) {
+		std::cout << "Fahrzeug erzeugt: Name=\"" << p_sName << "\", ID="
+				<< p_iID << std::endl;
+
+	}
+
+}
+
+Fahrzeug::~Fahrzeug() {
+	std::cout << "Fahrzeug geloescht: Name=\"" << p_sName << "\", ID=" << p_iID
+			<< std::endl;
+}
+
+//
+
+bool Fahrzeug::operator<(const Fahrzeug &rhs) const {
+	return p_dGesamtStrecke < rhs.p_dGesamtStrecke;
+}
+
+Fahrzeug& Fahrzeug::operator=(const Fahrzeug& other) {
+    if (this != &other) {
+        p_sName = other.p_sName;
+        // p_iID NICHT kopieren
+        // p_dMaxGeschwindigkeit auch NICHT (angenommen fix ab Konstruktion)
+        // Strecken/Zeit zurücksetzen
+        p_dGesamtStrecke = 0;
+        p_dGesamtZeit = 0;
+        p_dZeit = 0;
+    }
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream &os, const Fahrzeug &f) {
+	f.vAusgeben(os);   // polymorpher Aufruf
+	return os;
+}
+
+//
+
+void Fahrzeug::vKopfDef() {
+	std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "Name"
+			<< std::setw(20) << "MaxGeschwindigkeit" << std::setw(15)
+			<< "Gesamtstrecke" << std::endl << std::setfill('-')
+			<< std::setw(50) << "-" << std::setfill(' ') << std::endl;
+}
+
+void Fahrzeug::vKopf() {
+	std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "Name"
+			<< std::setw(20) << "MaxGeschwindigkeit" << std::setw(15)
+			<< "Gesamtstrecke" << std::endl << std::setfill('-')
+			<< std::setw(50) << "-" << std::setfill(' ') << std::endl;
+//	std::cout << std::left
+//			  << std::setw(5)  << "ID"
+//			  << std::setw(20) << "Name"
+//			  << std::setw(20) << "MaxGeschw."
+//			  << std::setw(15) << "Gesamtstrecke";
+}
+void Fahrzeug::vAusgeben(std::ostream &os) const {
+	os << std::left << std::setw(5) << p_iID << std::setw(20) << p_sName
+			<< std::setw(20) << std::fixed << std::setprecision(2)
+			<< p_dMaxGeschwindigkeit << std::setw(15) << std::fixed
+			<< std::setprecision(2) << p_dGesamtStrecke;
+}
+
+void Fahrzeug::vSimulieren() {
+	double dZeitDelta = dGlobaleZeit - p_dZeit;
+
+	if (dZeitDelta > 0) {
+		p_dGesamtZeit += dZeitDelta;
+		p_dGesamtStrecke += p_dMaxGeschwindigkeit * dZeitDelta;
+		p_dZeit = dGlobaleZeit;
+	}
+}
+
+double Fahrzeug::dTanken(double dMenge) {
+	return 0.0; // Stub
+}
+
+
+
+/* ============================================ */
+/* File: ./src/Fahrzeug.h */
+/* ============================================ */
+
+/*
+ * Fahrzeug.h
+ *
+ *  Created on: 22 Oct 2025
+ *      Author: sulta
+ */
+
+#ifndef FAHRZEUG_H
+#define FAHRZEUG_H
+
+#include <iostream>
+#include <string>
+
+#include "Logger.h"
+
+// Globals
+extern double dGlobaleZeit;
+
+class Fahrzeug {
+protected:
+	static int p_iMaxID;                // Klassenvariable für ID-Vergabe
+
+	std::string p_sName;
+	const int p_iID;                        // eindeutige, konstante ID
+	const double p_dMaxGeschwindigkeit;     // maximale Geschwindigkeit
+	double p_dGesamtStrecke;
+	double p_dGesamtZeit;
+	double p_dZeit; 						// Zeitpunkt der letzten Simulation
+
+public:
+	// Konstruktor
+	Fahrzeug();
+	Fahrzeug(const std::string &name);
+	Fahrzeug(const std::string &name, const double maxGeschw);
+
+	// Damit schlägt jede Zeile fehl wie Fahrzeug f2 = f1; Das ist wichtig,
+	// weil jede Fahrzeug-ID einzigartig sein soll und nicht kopiert werden darf
+	Fahrzeug(const Fahrzeug&) = delete;
+
+	// Virtueller Destruktor
+	virtual ~Fahrzeug();
+
+	// Getters und Setters
+	std::string getName() const {
+		return p_sName;
+	}
+
+	int getID() const {
+		return p_iID;
+	}
+
+	// Setter
+	void setName(const std::string &name) {
+		p_sName = name;
+	}
+
+	// Methods
+	static void vKopfDef(); // default kopf dings
+
+	static void vKopf();
+
+	virtual void vAusgeben(std::ostream &os = std::cout) const;
+	virtual void vSimulieren();
+
+	// Geschwindigkeit wird von Fahrrad überschrieben
+	virtual double dGeschwindigkeit() const {
+		return p_dMaxGeschwindigkeit;
+	}
+
+	// Tankfunktion
+	virtual double dTanken(double dMenge =
+			std::numeric_limits<double>::infinity());
+
+	// Operator "<"
+	bool operator<(const Fahrzeug &rhs) const;
+
+	// Operator "="
+	Fahrzeug& operator=(const Fahrzeug& other);
+
+
+};
+
+std::ostream& operator<<(std::ostream &os, const Fahrzeug &f);
+
+#endif
+
+
+
+/* ============================================ */
+/* File: ./src/Logger.h */
+/* ============================================ */
+
+/*
+ * Logger.hpp
+ *  Created on: 23 Oct 2025
+ *      Author: sulta
+ */
+
+#ifndef LOGGER_H_
+#define LOGGER_H_
+
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <chrono>
+#include <ctime>
+
+namespace Logger {
+
+enum class Level {
+	INFO, WARN, ERROR
+};
+
+//  interne Hilfsfunktionen
+inline std::string getTimestamp() {
+	auto now = std::chrono::system_clock::now();
+	std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+	std::tm tm_buf;
+#if defined(_WIN32)
+	localtime_s(&tm_buf, &t_c);
+#else
+		localtime_r(&t_c, &tm_buf);
+	#endif
+	std::ostringstream oss;
+	oss << std::put_time(&tm_buf, "%d:%m:%y %H:%M");
+	return oss.str();
+}
+
+inline std::string levelToString(Level lvl) {
+	switch (lvl) {
+		case Level::INFO:
+			return "INFO";
+		case Level::WARN:
+			return "WARN";
+		case Level::ERROR:
+			return "ERROR";
+		default:
+			return "UNKNOWN";
+	}
+}
+
+inline std::string levelColor(Level lvl) {
+	switch (lvl) {
+		case Level::INFO:
+			return "\033[0m";   // normal
+		case Level::WARN:
+			return "\033[33m";  // yellow
+		case Level::ERROR:
+			return "\033[31m";  // red
+		default:
+			return "\033[0m";
+	}
+}
+
+//  zentrale Logfunktion
+inline void log(Level lvl, const std::string &tag, const std::string &msg) {
+	std::cout << levelColor(lvl) << "[" << getTimestamp() << "] " << "["
+			<< levelToString(lvl) << "] " << "[" << tag << "]: " << msg
+			<< "\033[0m" << std::endl;
+}
+
+inline void info(const std::string &tag, const std::string &msg) {
+	log(Level::INFO, tag, msg);
+}
+inline void warn(const std::string &tag, const std::string &msg) {
+	log(Level::WARN, tag, msg);
+}
+inline void error(const std::string &tag, const std::string &msg) {
+	log(Level::ERROR, tag, msg);
+}
+
+//  hübscher Banner-Logger
+inline void banner(const std::string &tag, const std::string &title, int width =
+		60, char fill = '=') {
+	std::ostringstream oss;
+
+	int textLen = static_cast<int>(title.size()) + 2; // extra spaces
+	if (textLen >= width) {
+		oss << " " << title << " ";
+	} else {
+		int totalPadding = width - textLen;
+		int leftPadding = totalPadding / 2;
+		int rightPadding = totalPadding - leftPadding;
+
+		oss << std::setfill(fill) << std::setw(leftPadding) << "" << " "
+				<< title << " " << std::setfill(fill) << std::setw(rightPadding)
+				<< "";
+	}
+
+	log(Level::INFO, tag, "\n" + oss.str() + "\n");
+}
+
+} // namespace Logger
+
+#endif /* LOGGER_H_ */
+
+
+
+/* ============================================ */
+/* File: ./src/main.cpp */
+/* ============================================ */
+
+//============================================================================
+// Name        : Main.cpp
+// Author      : G. Sultan
+// Version     : Alpha 0.1
+// Copyright   : Unlicense
+//============================================================================
+
+#include <string>
+#include <iostream>
+
+#include "Fahrzeug.h"
+#include "Aufgaben.h"
+#include "Utils.h"
+
+void vRunSimulation_8();
+
+double dGlobaleZeit = 0.0;
+
+
+int main() {
+	int iTestIndex = 1;
+
+	std::cout << "====== The application is initializing ======" << std::endl;
+
+
+
+	//vRunSimulation_8();
+	//vAufgabe1a();
+	//vAufgaben()
+	//vAufgabe2();
+	vAufgabe3();
+
+
+
+	std::cout << "====== The application is shutting down ======" << std::endl;
+	std::cout << "====== See you next time! ======" << std::endl;
+
+	std::cout << "Written by: Gabriel Sultan." << std::endl;
+
+	return 0;
+}
+
+
+
+
+/* ============================================ */
+/* File: ./src/PKW.cpp */
+/* ============================================ */
+
+/*
+ * PKW.cpp
+ *
+ *  Created on: 27 Oct 2025
+ *      Author: sulta
+ */
+
+#include "PKW.h"
+#include <iomanip>
+#include <iostream>
+
+PKW::PKW(const std::string &name, double vmax, double verbrauch, double tankvol) :
+				Fahrzeug(name, vmax),
+					p_dVerbrauch(verbrauch),
+					p_dTankvolumen(tankvol),
+					p_dTankinhalt(tankvol / 2.0) {
+}
+
+double PKW::dTanken(double dMenge) {
+	double diff = p_dTankvolumen - p_dTankinhalt;
+	double nachgetankt = std::min(diff, dMenge);
+
+	p_dTankinhalt += nachgetankt;
+
+	std::cout << "Fahrzeug #" << p_iID << " " << p_sName << " wurde getankt ("
+			<< nachgetankt << "L)" << std::endl;
+
+	return nachgetankt;
+}
+
+void PKW::vSimulieren() {
+	// wenn der tank leer ist, dann überspringen
+	if (p_dTankinhalt <= 0.0)
+		return;
+
+	double oldTime = p_dZeit;
+
+	Fahrzeug::vSimulieren();
+
+	double deltaT = p_dZeit - oldTime;
+	double gefahreneKm = p_dMaxGeschwindigkeit * deltaT;
+
+	// Spritt Verbrauch
+	double verbraucht = gefahreneKm * (p_dVerbrauch / 100.0);
+
+	p_dTankinhalt -= verbraucht;
+	if (p_dTankinhalt < 0.0)
+		p_dTankinhalt = 0.0;
+}
+
+void PKW::vAusgeben(std::ostream &os) const {
+	Fahrzeug::vAusgeben(os);
+	os << std::setw(15) << std::fixed << std::setprecision(2) << p_dTankinhalt
+			<< std::setw(10) << p_dVerbrauch;
+}
+
+void PKW::vKopf() {
+	Fahrzeug::vKopf(); // print base part
+	std::cout << std::setw(15) << "Tankinhalt" << std::setw(15) << "Verbrauch"
+			<< std::endl << std::setfill('-') << std::setw(80) << "-"
+			<< std::setfill(' ') << std::endl;
+}
+
+
+
+/* ============================================ */
+/* File: ./src/PKW.h */
+/* ============================================ */
+
+/*
+ * PKW.h
+ *
+ *  Created on: 27 Oct 2025
+ *      Author: sulta
+ */
+
+#ifndef PKW_H_
+#define PKW_H_
+
+#include "Fahrzeug.h"
+#include <limits>
+
+class PKW: public Fahrzeug {
+private:
+	double p_dVerbrauch;    // L/100km
+	double p_dTankvolumen;  // L
+	double p_dTankinhalt;   // L
+
+public:
+	PKW(const std::string &name, double vmax, double verbrauch, double tankvol =
+			55.0);
+	virtual ~PKW() override {
+	}
+
+	double dTanken(double dMenge = std::numeric_limits<double>::infinity()) override;
+	void vSimulieren() override;
+	static void vKopf();
+	void vAusgeben(std::ostream &os = std::cout) const override;
+};
+
+#endif /* PKW_H_ */
+
+
+
+/* ============================================ */
+/* File: ./src/Utils.cpp */
+/* ============================================ */
+
+/*
+ * Utils.cpp
+ *
+ *  Created on: 27 Oct 2025
+ *      Author: sulta
+ */
+
+#include "Utils.h"
+
+void vAufgaben() {
+	vAufgabe1();
+}
+
+// ------------------------------------------------------
+
+void vAusgabeTabelle(const std::vector<std::unique_ptr<Fahrzeug>> &fahrzeuge) {
+	Fahrzeug::vKopf();
+	for (const auto &f : fahrzeuge) {
+		f->vAusgeben();
+		std::cout << std::endl;
+	}
+}
+
+void vAusgabeTabelle(const std::vector<std::shared_ptr<Fahrzeug>> &fahrzeuge) {
+	Fahrzeug::vKopf();
+	for (const auto &f : fahrzeuge) {
+		f->vAusgeben();
+		std::cout << std::endl;
+	}
+}
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+std::string inputString(const std::string &prompt) {
+	std::string line;
+	std::cout << prompt;
+	std::getline(std::cin, line);
+	return line;
+}
+
+double inputDouble(const std::string &prompt) {
+    std::string line;
+    double value;
+
+    while (true) {
+        std::cout << prompt;
+        std::getline(std::cin, line);
+
+        std::stringstream ss(line);
+        if (ss >> value && ss.eof()) {
+            return value;
+        }
+
+        std::cout << "Ungültige Eingabe. Bitte eine Zahl eingeben!\n";
+    }
+}
+
+int inputInt(const std::string &prompt) {
+	std::string line;
+	int value;
+
+	while (true) {
+		std::cout << prompt;
+		std::getline(std::cin, line);
+
+		std::stringstream ss(line);
+		if (ss >> value && ss.eof()) {
+			return value; // gültige Zahl, und sonst nix in der Zeile
+		}
+
+		std::cout << "Ungültige Eingabe. Bitte eine ganze Zahl eingeben!\n";
+	}
+}
+
+
+bool bInputConfirmation(const std::string &prompt) {
+    std::string input;
+
+    while (true) {
+        std::cout << prompt << " (j/n): ";
+        std::getline(std::cin, input);
+
+        if (input.empty()) continue;
+
+        char c = std::tolower(input[0]);
+
+        if (c == 'j' || c == 'y')
+            return true;
+        else if (c == 'n')
+            return false;
+        else
+            std::cout << "Bitte 'j' oder 'n' eingeben." << std::endl;
+    }
+}
+
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+std::unique_ptr<PKW> pkwInput() {
+	std:: cout << "PKW Erstellung" << std::endl;
+	std::string sName = inputString("Name: ");
+	double dVmax = inputDouble("Max. Geschwindigkeit [km/h]: ");
+	double dVerbrauch = inputDouble("Verbrauch [L/100km]: ");
+
+	return std::make_unique<PKW>(sName, dVmax, dVerbrauch);
+}
+
+
+std::unique_ptr<Fahrrad> fahrradInput() {
+	std:: cout << "Fahrrad Erstellung" << std::endl;
+	std::string sName = inputString("Name: ");
+	double dVmax = inputDouble("Max. Geschwindigkeit [km/h]: ");
+
+	return std::make_unique<Fahrrad>(sName, dVmax);
+}
+
+std::string zufaelligerFahrzeugName() {
+    static std::vector<std::string> hersteller = {
+        "BMW", "Audi", "Mercedes", "VW", "Opel", "Tesla",
+        "Toyota", "Honda", "Ford", "Kawasaki", "Yamaha", "Ducati"
+    };
+
+    static std::vector<std::string> modelle = {
+        "Speedster", "GT", "Racer", "Turbo", "Pro", "Classic", "Neo", "Plus", "Max"
+    };
+
+
+
+    // Seed only once
+    static bool seeded = false;
+    if (!seeded) {
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        seeded = true;
+    }
+
+    // random
+    int i = std::rand() % hersteller.size();
+    int j = std::rand() % modelle.size();
+
+    return hersteller[i] + " " + modelle[j];
+}
+
+
+// Vergleiche
+bool nearlyEqual(double a, double b, double epsilon) {
+    return std::fabs(a - b) < epsilon;
+}
+
+bool greaterOrEqual(double a, double b, double epsilon) {
+    return (a > b) || nearlyEqual(a, b, epsilon);
+}
+
+bool lessOrEqual(double a, double b, double epsilon) {
+    return (a < b) || nearlyEqual(a, b, epsilon);
+}
+
+
+
+/* ============================================ */
+/* File: ./src/Utils.h */
+/* ============================================ */
+
+/*
+ * Utils.h
+ *
+ *  Created on: 27 Oct 2025
+ *      Author: sulta
+ */
+
+#ifndef UTILS_H_
+#define UTILS_H_
+
+#include "Fahrzeug.h"
+#include "PKW.h"
+#include "Fahrrad.h"
+#include "Aufgaben.h"
+
+#include <vector>
+#include <memory>
+#include <string>
+#include <limits>
+#include <cmath>
+
+
+void vAufgaben();
+
+void vAusgabeTabelle(const std::vector<std::unique_ptr<Fahrzeug>> &fahrzeuge);
+void vAusgabeTabelle(const std::vector<std::shared_ptr<Fahrzeug>> &fahrzeuge);
+
+double inputDouble(const std::string &prompt);
+std::string inputString(const std::string &prompt);
+int inputInt(const std::string &prompt);
+bool bInputConfirmation(const std::string &prompt);
+
+std::string zufaelligerFahrzeugName();
+
+std::unique_ptr<PKW> pkwInput();
+std::unique_ptr<Fahrrad> fahrradInput();
+
+// Toleranz für double-Vergleiche
+constexpr double EPSILON = 1e-6;
+
+// Vergleiche mit toleranz
+bool nearlyEqual(double a, double b, double epsilon = EPSILON);
+bool greaterOrEqual(double a, double b, double epsilon = EPSILON);
+bool lessOrEqual(double a, double b, double epsilon = EPSILON);
+
+#endif /* UTILS_H_ */
+
+
+

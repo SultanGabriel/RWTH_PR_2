@@ -17,54 +17,30 @@
 extern double dGlobaleZeit;
 
 class Fahrzeug {
-private:
+protected:
+	static int p_iMaxID;                // Klassenvariable für ID-Vergabe
+
 	std::string p_sName;
-	const int p_iID;                 // eindeutige, konstante ID
-	static int p_iMaxID;             // Klassenvariable für ID-Vergabe
-	const double p_dMaxGeschwindigkeit;
+	const int p_iID;                        // eindeutige, konstante ID
+	const double p_dMaxGeschwindigkeit;     // maximale Geschwindigkeit
 	double p_dGesamtStrecke;
 	double p_dGesamtZeit;
-
 	double p_dZeit; 						// Zeitpunkt der letzten Simulation
 
 public:
-	// Default-Konstruktor
-	Fahrzeug() :
-			p_sName(""), p_iID(++p_iMaxID), p_dMaxGeschwindigkeit(0), p_dGesamtStrecke(
-					0), p_dGesamtZeit(0), p_dZeit(0) {
-		std::cout << "Fahrzeug (Default) erzeugt: Name=\"" << p_sName
-				<< "\", ID=" << p_iID << std::endl;
-	}
+	// Konstruktor
+	Fahrzeug();
+	Fahrzeug(const std::string &name);
+	Fahrzeug(const std::string &name, const double maxGeschw);
 
-	// Konstruktor mit Name
-	Fahrzeug(const std::string &name) :
-			p_sName(name), p_iID(++p_iMaxID), p_dMaxGeschwindigkeit(0), p_dGesamtStrecke(
-					0), p_dGesamtZeit(0), p_dZeit(0) {
-		std::cout << "Fahrzeug erzeugt: Name=\"" << p_sName << "\", ID="
-				<< p_iID << std::endl;
-	}
+	// Damit schlägt jede Zeile fehl wie Fahrzeug f2 = f1; Das ist wichtig,
+	// weil jede Fahrzeug-ID einzigartig sein soll und nicht kopiert werden darf
+	Fahrzeug(const Fahrzeug&) = delete;
 
-	// Konstruktor mit Name und maximale geschw.
-	Fahrzeug(const std::string &name, const int maxGeschw) :
-			p_sName(name), p_iID(++p_iMaxID), p_dMaxGeschwindigkeit(
-					maxGeschw > 0 ? maxGeschw : 0.0), p_dGesamtStrecke(0), p_dGesamtZeit(
-					0), p_dZeit(0) {
-		std::cout << "Fahrzeug erzeugt: Name=\"" << p_sName << "\", ID="
-				<< p_iID << std::endl;
-		if (maxGeschw <= 0.0) {
-			std::cout << "Fahrzeug erzeugt: Name=\"" << p_sName << "\", ID="
-					<< p_iID << std::endl;
+	// Virtueller Destruktor
+	virtual ~Fahrzeug();
 
-		}
-	}
-
-	// Destruktor
-	~Fahrzeug() {
-		std::cout << "Fahrzeug geloescht: Name=\"" << p_sName << "\", ID="
-				<< p_iID << std::endl;
-	}
-
-	// Getter
+	// Getters und Setters
 	std::string getName() const {
 		return p_sName;
 	}
@@ -79,10 +55,31 @@ public:
 	}
 
 	// Methods
-	static void vKopf(); // static, da es keine Daten aus der Class benutzt
-	void vAusgeben() const; // Const, weil die Ausgabe keine Daten verändert
-	void vSimulieren();
+	static void vKopfDef(); // default kopf dings
+
+	static void vKopf();
+
+	virtual void vAusgeben(std::ostream &os = std::cout) const;
+	virtual void vSimulieren();
+
+	// Geschwindigkeit wird von Fahrrad überschrieben
+	virtual double dGeschwindigkeit() const {
+		return p_dMaxGeschwindigkeit;
+	}
+
+	// Tankfunktion
+	virtual double dTanken(double dMenge =
+			std::numeric_limits<double>::infinity());
+
+	// Operator "<"
+	bool operator<(const Fahrzeug &rhs) const;
+
+	// Operator "="
+	Fahrzeug& operator=(const Fahrzeug& other);
+
 
 };
+
+std::ostream& operator<<(std::ostream &os, const Fahrzeug &f);
 
 #endif
