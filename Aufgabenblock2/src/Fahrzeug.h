@@ -11,12 +11,15 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <memory>
+#include <limits>
 
-#include "Logger.h"
 #include "SimulationsObjekt.h"
-#include "Verhalten.h"
-#include "FahrenVerhalten.h"
-#include "ParkenVerhalten.h"
+
+class Verhalten;
+class FahrenVerhalten;
+class ParkenVerhalten;
+class Weg;
 
 // Globals
 extern double dGlobaleZeit;

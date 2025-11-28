@@ -5,7 +5,11 @@
  *      Author: sulta
  */
 
+#include "Utils.h"
 #include "Fahrzeug.h"
+#include "Verhalten.h"
+#include "FahrenVerhalten.h"
+#include "ParkenVerhalten.h"
 
 // Konstruktoren
 Fahrzeug::Fahrzeug() :
@@ -13,7 +17,7 @@ Fahrzeug::Fahrzeug() :
 					p_dMaxGeschwindigkeit(0),
 					p_dGesamtStrecke(0),
 					p_dGesamtZeit(0),
-					p_dAbschnittStrecke(9) {
+					p_dAbschnittStrecke(0) {
 }
 
 Fahrzeug::Fahrzeug(const std::string &name) :
@@ -21,7 +25,7 @@ Fahrzeug::Fahrzeug(const std::string &name) :
 					p_dMaxGeschwindigkeit(0),
 					p_dGesamtStrecke(0),
 					p_dGesamtZeit(0),
-					p_dAbschnittStrecke(9) {
+					p_dAbschnittStrecke(0) {
 }
 
 Fahrzeug::Fahrzeug(const std::string &name, const double maxGeschw) :
@@ -29,7 +33,7 @@ Fahrzeug::Fahrzeug(const std::string &name, const double maxGeschw) :
 					p_dMaxGeschwindigkeit(maxGeschw),
 					p_dGesamtStrecke(0),
 					p_dGesamtZeit(0),
-					p_dAbschnittStrecke(9) {
+					p_dAbschnittStrecke(0) {
 }
 
 Fahrzeug::~Fahrzeug() {
@@ -103,12 +107,12 @@ void Fahrzeug::vSimulieren() {
 	}
 
 	double dt = dGlobaleZeit - p_dZeit;
+	// updating component time must happen before dStrecke is called, i guess
+	p_dZeit = dGlobaleZeit;
 
 	double strecke = p_pVerhalten->dStrecke(*this, dt);
 	p_dGesamtStrecke += strecke;
 	p_dAbschnittStrecke += strecke;
-
-	p_dZeit = dGlobaleZeit;
 }
 
 double Fahrzeug::dTanken(double dMenge) {

@@ -7,6 +7,11 @@
 
 #include "Utils.h"
 
+#include "PKW.h"
+#include "Fahrrad.h"
+#include "Fahrzeug.h"
+
+
 // ------------------------------------------------------
 
 void vAusgabeTabelle(const std::vector<std::unique_ptr<Fahrzeug>> &fahrzeuge) {

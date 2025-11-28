@@ -20,6 +20,9 @@ public:
     virtual ~Verhalten() = default;
 
     virtual double dStrecke(Fahrzeug& fzg, double dZeitIntervall) = 0;
+    virtual Weg* getWeg() const {
+    	return p_pWeg;
+    }
 };
 
 

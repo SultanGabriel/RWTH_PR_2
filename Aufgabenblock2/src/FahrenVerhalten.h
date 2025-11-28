@@ -9,7 +9,9 @@
 #define SRC_FAHRENVERHALTEN_H_
 
 #include "Verhalten.h"
-#include "Fahrzeug.h"
+#include "ausnahmen/StreckenendeFahrausnahme.h"
+
+class Fahrzeug;
 
 class FahrenVerhalten: public Verhalten {
 public:

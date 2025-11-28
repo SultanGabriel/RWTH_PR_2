@@ -9,6 +9,7 @@
 
 #include "Weg.h"
 #include "Fahrzeug.h"
+#include "ausnahmen/Fahrausnahme.h"
 
 Weg::Weg():
 				SimulationsObjekt::SimulationsObjekt(""),
@@ -62,7 +63,12 @@ void Weg::vAusgeben(std::ostream& os) const {
 
 void Weg::vSimulieren() {
 	for (auto &fzg : p_pFahrzeuge) {
-		fzg->vSimulieren();
+		try {
+		    fzg->vSimulieren();
+		} catch (Fahrausnahme& e) {
+			e.vBearbeiten();
+		}
+
 	}
 }
 

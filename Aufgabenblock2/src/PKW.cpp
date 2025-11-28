@@ -5,9 +5,12 @@
  *      Author: sulta
  */
 
-#include "PKW.h"
 #include <iomanip>
 #include <iostream>
+
+#include "PKW.h"
+#include "Fahrzeug.h"
+#include "Verhalten.h"
 
 PKW::PKW(const std::string &name, double vmax, double verbrauch, double tankvol) :
 				Fahrzeug(name, vmax),
@@ -29,23 +32,19 @@ double PKW::dTanken(double dMenge) {
 }
 
 void PKW::vSimulieren() {
-	// wenn der tank leer ist, dann überspringen
-	if (p_dTankinhalt <= 0.0)
-		return;
-
-	double oldTime = p_dZeit;
+	double dOldAbschnitt = p_dAbschnittStrecke;
 
 	Fahrzeug::vSimulieren();
 
-	double deltaT = p_dZeit - oldTime;
-	double gefahreneKm = p_dMaxGeschwindigkeit * deltaT;
 
 	// Spritt Verbrauch
-	double verbraucht = gefahreneKm * (p_dVerbrauch / 100.0);
-
-	p_dTankinhalt -= verbraucht;
-	if (p_dTankinhalt < 0.0)
-		p_dTankinhalt = 0.0;
+	double deltaS = p_dAbschnittStrecke - dOldAbschnitt;
+	if (deltaS > 0.0) {
+		double dVerbraucht = deltaS * (p_dVerbrauch / 100.0);
+		p_dTankinhalt -= dVerbraucht;
+		if (p_dTankinhalt < 0.0)
+			p_dTankinhalt = 0.0;
+	}
 }
 
 void PKW::vAusgeben(std::ostream &os) const {
@@ -59,4 +58,20 @@ void PKW::vKopf() {
 	std::cout << std::setw(15) << "Tankinhalt" << std::setw(15) << "Verbrauch"
 			<< std::endl << std::setfill('-') << std::setw(80) << "-"
 			<< std::setfill(' ') << std::endl;
+}
+
+double PKW::dGeschwindigkeit() const {
+    if (p_dTankinhalt <= 0)
+        return 0;
+
+    return p_dMaxGeschwindigkeit;
+
+//    double v = p_dMaxGeschwindigkeit;
+//
+//	// Tempolimit nutzen
+//    if (p_pVerhalten && p_pVerhalten->getWeg()) {
+//        v = std::min(v, p_pVerhalten->getWeg()->dTempolimit());
+//    }
+//
+//    return v;
 }

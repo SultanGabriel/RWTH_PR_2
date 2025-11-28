@@ -8,10 +8,7 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#include "Fahrzeug.h"
-#include "PKW.h"
-#include "Fahrrad.h"
-#include "Aufgaben.h"
+// #include "Aufgaben.h"
 
 #include <vector>
 #include <memory>
@@ -19,6 +16,9 @@
 #include <limits>
 #include <cmath>
 
+class PKW;
+class Fahrrad;
+class Fahrzeug;
 
 void vAufgaben();
 

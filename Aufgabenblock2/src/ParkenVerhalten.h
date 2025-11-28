@@ -10,11 +10,12 @@
 
 #include "Verhalten.h"
 #include "Fahrzeug.h"
+#include "ausnahmen/LosfahrenFahrausnahme.h"
 
 class ParkenVerhalten: public Verhalten {
 protected:
     double p_dStartzeit;
-	bool p_bGestartet = false;
+	bool p_bGestartet;
 public:
 	ParkenVerhalten(Weg *weg, double startzeit);
 	virtual ~ParkenVerhalten();

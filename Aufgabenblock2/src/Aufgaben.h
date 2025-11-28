@@ -31,6 +31,7 @@ void vAufgabe2();
 void vAufgabe3();
 void vAufgabe4();
 void vAufgabe5();
+void vAufgabe6();
 
 void vAufgabe_AB1();
 

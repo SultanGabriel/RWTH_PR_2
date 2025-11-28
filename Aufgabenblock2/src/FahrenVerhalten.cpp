@@ -6,6 +6,7 @@
  */
 
 #include "FahrenVerhalten.h"
+#include "Fahrzeug.h"
 
 FahrenVerhalten::FahrenVerhalten(Weg *weg) :
 		Verhalten(weg) {
@@ -22,9 +23,7 @@ double FahrenVerhalten::dStrecke(Fahrzeug &fzg, double dt) {
 	double dRestStrecke = p_pWeg->dLaenge() - fzg.dAbschnittStrecke();
 
 	if (dRestStrecke <= 0) {
-		std::cout << fzg.getName() << " ist am Ende des Weges angekommenn."
-				<< std::endl;
-		return 0.0;
+		throw StreckenendeFahrausnahme(fzg, *p_pWeg);
 	}
 
 	return std::min(dEffStrecke, dRestStrecke);

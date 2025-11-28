@@ -239,39 +239,36 @@ void vAufgabe2() {
 
 void vAufgabe3() {
 
-    PKW pkw1("Audi", 180, 8);
-    PKW pkw2("BMW", 200, 10);
-    Fahrrad bike("Canyon", 28);
+	PKW pkw1("Audi", 180, 8);
+	PKW pkw2("BMW", 200, 10);
+	Fahrrad bike("Canyon", 28);
 
-    std::cout << std::endl;
-    Fahrzeug::vKopf();
-    std::cout << pkw1 << std::endl
-              << pkw2 << std::endl
-              << bike << std::endl;
-    // minimal simulieren, um Vergleich zu demonstrieren
-    dGlobaleZeit = 1.0;
-    pkw1.vSimulieren();
-    dGlobaleZeit = 2.0;
-    pkw2.vSimulieren();
+	std::cout << std::endl;
+	Fahrzeug::vKopf();
+	std::cout << pkw1 << std::endl << pkw2 << std::endl << bike << std::endl;
+	// minimal simulieren, um Vergleich zu demonstrieren
+	dGlobaleZeit = 1.0;
+	pkw1.vSimulieren();
+	dGlobaleZeit = 2.0;
+	pkw2.vSimulieren();
 
-    // Ausgabeoperator
-    std::cout << std::endl;
-    Fahrzeug::vKopf();
-    std::cout << pkw1 << std::endl
-              << pkw2 << std::endl
-              << bike << std::endl;
+	// Ausgabeoperator
+	std::cout << std::endl;
+	Fahrzeug::vKopf();
+	std::cout << pkw1 << std::endl << pkw2 << std::endl << bike << std::endl;
 
-    // Vergleich
-    if (pkw1 < pkw2)
-        std::cout << "pkw1 ist langsamer (weniger Strecke) als pkw2" << std::endl;
+	// Vergleich
+	if (pkw1 < pkw2)
+		std::cout << "pkw1 ist langsamer (weniger Strecke) als pkw2"
+				<< std::endl;
 
-    // Copy-Konstruktor verboten (prüfbar per Compiler-Fehler)
-    // Fahrzeug f2 = f1; // ❌ sollte nicht kompilieren
+	// Copy-Konstruktor verboten (prüfbar per Compiler-Fehler)
+	// Fahrzeug f2 = f1; // ❌ sollte nicht kompilieren
 
-    // Zuweisung
-    PKW pkw3("VW", 160, 7);
-    pkw3 = pkw1;
-    std::cout << "Nach Zuweisung: " << pkw3 << std::endl;
+	// Zuweisung
+	PKW pkw3("VW", 160, 7);
+	pkw3 = pkw1;
+	std::cout << "Nach Zuweisung: " << pkw3 << std::endl;
 	std::cout << "=== Simulation beendet ===" << std::endl;
 }
 
@@ -283,80 +280,126 @@ double dEpsilon = 0.001;
 
 void vAufgabe_AB1() {
 
-    int l = 0; // Laufindex für gezielte AUsgabe
-    vector<int> ausgabe{13};
-    double dTakt = 0.4;
+	int l = 0; // Laufindex für gezielte AUsgabe
+	vector<int> ausgabe { 13 };
+	double dTakt = 0.4;
 
-    std::vector<unique_ptr<Fahrzeug>> vecFahrzeuge;
-    vecFahrzeuge.push_back(make_unique <PKW>("Audi", 217, 10.7));
-    vecFahrzeuge.push_back(make_unique <Fahrrad>("BMX", 21.4));
-    for (dGlobaleZeit = 0; dGlobaleZeit < 6; dGlobaleZeit += dTakt)
-    {
-        auto itL = find(ausgabe.begin(), ausgabe.end(), l);
-        if (itL != ausgabe.end()) {
-            std::cout << std::endl << l <<  " Globalezeit = " << dGlobaleZeit << std::endl;
-            Fahrzeug::vKopf();
-        }
+	std::vector<unique_ptr<Fahrzeug>> vecFahrzeuge;
+	vecFahrzeuge.push_back(make_unique<PKW>("Audi", 217, 10.7));
+	vecFahrzeuge.push_back(make_unique<Fahrrad>("BMX", 21.4));
+	for (dGlobaleZeit = 0; dGlobaleZeit < 6; dGlobaleZeit += dTakt) {
+		auto itL = find(ausgabe.begin(), ausgabe.end(), l);
+		if (itL != ausgabe.end()) {
+			std::cout << std::endl << l << " Globalezeit = " << dGlobaleZeit
+					<< std::endl;
+			Fahrzeug::vKopf();
+		}
 
-        for (int i = 0; i < vecFahrzeuge.size(); i++)
-        {
-            vecFahrzeuge[i]->vSimulieren();
-            if (fabs(dGlobaleZeit - 3.0) < dTakt/2)
-            {
-                vecFahrzeuge[i]->dTanken();
-            }
-            if (itL != ausgabe.end()) {
-                std::cout << *vecFahrzeuge[i] << endl;
-            }
-        }
-        l++;
-    }
-    char c;
-    std::cin >> c;
+		for (int i = 0; i < vecFahrzeuge.size(); i++) {
+			vecFahrzeuge[i]->vSimulieren();
+			if (fabs(dGlobaleZeit - 3.0) < dTakt / 2) {
+				vecFahrzeuge[i]->dTanken();
+			}
+			if (itL != ausgabe.end()) {
+				std::cout << *vecFahrzeuge[i] << endl;
+			}
+		}
+		l++;
+	}
+	char c;
+	std::cin >> c;
 }
 
 // ---- Aufgabenblock 2 ----
 void vAufgabe4() {
 	std::cout << std::endl << "====        Aufgabe 4        ====" << std::endl;
 
-    Weg::vKopf();
+	Weg::vKopf();
 
-    Weg w1("Landstrasse_17", 12.5, Tempolimit::Landstrasse);
+	Weg w1("Landstrasse_17", 12.5, Tempolimit::Landstrasse);
 
-    std::cout << w1 << std::endl;
+	std::cout << w1 << std::endl;
 	std::cout << "=== Aufgabe 4 beendet ===" << std::endl;
 }
 
 void vAufgabe5() {
 	std::cout << std::endl << "====        Aufgabe 5        ====" << std::endl;
 
-    Weg w("Landstrasse_17", 12.5, Tempolimit::Landstrasse);
-    // Fahrendes Fahrzeug
-    auto f1 = std::make_unique<PKW>("BMW", 200, 8, 65);
+	Weg w("Landstrasse_17", 12.5, Tempolimit::Landstrasse);
+	// Fahrendes Fahrzeug
+	auto f1 = std::make_unique<PKW>("BMW", 200, 8, 65);
 
-    // Parkendes Fahrzeug, das ab Zeit 2.0 startet
-    auto f2 = std::make_unique<PKW>("Audi", 180, 7, 55);
+	// Parkendes Fahrzeug, das ab Zeit 2.0 startet
+	auto f2 = std::make_unique<PKW>("Audi", 180, 7, 55);
 
-    w.vAnnahme(std::move(f1));           // fahrend
-    w.vAnnahme(std::move(f2), 2.0);      // parken mit Startzeit
-
-    std::cout << "Simulationsbegin...\n";
+	w.vAnnahme(std::move(f1));           // fahrend
+	w.vAnnahme(std::move(f2), 2.0);      // parken mit Startzeit
 
 	std::cout << "Simulationsbegin..." << std::endl;
-	   Weg::vKopf();
 
-	    const int maxI = 10;
-	    for (int i = 0; i < maxI; i++) {
-	        w.vSimulieren();
+	const int maxI = 10;
+	for (int i = 0; i < maxI; i++) {
+		w.vSimulieren();
 
-	        std::cout << "\nZeit: " << dGlobaleZeit
-	                  << " (" << i+1 << "/" << maxI << ")\n";
+		std::cout << "\nZeit: " << dGlobaleZeit << " (" << i + 1 << "/" << maxI
+				<< ")\n";
 
-	        Weg::vKopf();
-	        std::cout << w << std::endl;
+		Weg::vKopf();
+		std::cout << w << std::endl;
 
-	        dGlobaleZeit += 0.5;
-	    }
+		dGlobaleZeit += 0.5;
+	}
 
 	std::cout << "=== Aufgabe 5 beendet ===" << std::endl;
+}
+
+void vAufgabe6() {
+	std::cout << std::endl << "====        Aufgabe 6        ====" << std::endl;
+
+	dGlobaleZeit = 0.0;
+	const int maxI = 20;
+
+	Weg w1("Landstrasse_17", 120.5, Tempolimit::Landstrasse);
+	Weg w2("Autobahn_1", 120.5, Tempolimit::Autobahn);
+	// Fahrendes Fahrzeug
+	auto fA1 = std::make_unique<PKW>("BMW", 200, 8, 65);
+	auto fB1 = std::make_unique<PKW>("Mercedes", 180, 8, 65);
+
+	// Parkendes Fahrzeug, das ab Zeit 2.0 startet
+	auto fA2 = std::make_unique<PKW>("Audi", 190, 7, 55);
+	auto fB2 = std::make_unique<PKW>("VW", 180, 7, 55);
+
+	w1.vAnnahme(std::move(fA1));           // fahrend
+	w1.vAnnahme(std::move(fA2), 2.75);      // parken mit Startzeit
+
+	w2.vAnnahme(std::move(fB1));           // fahrend
+	w2.vAnnahme(std::move(fB2), 3.75);      // parken mit Startzeit
+
+	std::cout << std::endl << "Zeit: " << dGlobaleZeit << " (0/" << maxI << ")"
+			<< std::endl;
+
+	Weg::vKopf();
+	std::cout << w1 << std::endl;
+	std::cout << w2 << std::endl;
+
+	std::cout << "Simulationsbegin..." << std::endl;
+	for (int i = 0; i < maxI; i++) {
+		dGlobaleZeit += 0.25;
+
+		if (nearlyEqual(dGlobaleZeit, 2.5)) {
+			std::cout << "[WARN] Shit" << std::endl;
+		}
+
+		std::cout << std::endl << "Zeit: " << dGlobaleZeit << " (" << i + 1
+				<< "/" << maxI << ")" << std::endl;
+
+		w1.vSimulieren();
+		w2.vSimulieren();
+
+		Weg::vKopf();
+		std::cout << w1 << std::endl;
+		std::cout << w2 << std::endl;
+	}
+
+	std::cout << "=== Aufgabe 6 beendet ===" << std::endl;
 }
