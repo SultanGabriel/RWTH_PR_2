@@ -95,6 +95,8 @@ void Fahrzeug::vAusgeben(std::ostream &os) const {
 }
 
 void Fahrzeug::vSimulieren() {
+	// sanity check if logic is wrong then it say inconsole. How do you say it....
+	// Praktisch!
 	if (p_dZeit == dGlobaleZeit) {
 		std::cout << "[WARN] Extensive vSimulieren call" << std::endl;
 		return;
@@ -107,8 +109,8 @@ void Fahrzeug::vSimulieren() {
 	}
 
 	double dt = dGlobaleZeit - p_dZeit;
-	// updating component time must happen before dStrecke is called, i guess
 	p_dZeit = dGlobaleZeit;
+	p_dGesamtZeit += dt;
 
 	double strecke = p_pVerhalten->dStrecke(*this, dt);
 	p_dGesamtStrecke += strecke;

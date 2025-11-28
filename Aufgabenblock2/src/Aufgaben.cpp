@@ -276,7 +276,6 @@ void vAufgabe3() {
 
 using namespace std;
 extern double dGlobaleZeit;
-double dEpsilon = 0.001;
 
 void vAufgabe_AB1() {
 

@@ -22,7 +22,6 @@
 #include "PKW.h"
 #include "Fahrrad.h"
 #include "Weg.h"
-#include "Utils.h"
 
 #include "lib/SimuClient.h"
 #include "lib/vertagt_liste.h"

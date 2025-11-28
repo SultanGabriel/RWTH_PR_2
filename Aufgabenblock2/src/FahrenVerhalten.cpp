@@ -8,6 +8,7 @@
 #include "FahrenVerhalten.h"
 #include "Fahrzeug.h"
 #include "Weg.h"
+#include "Utils.h"
 
 FahrenVerhalten::FahrenVerhalten(Weg *weg) :
 		Verhalten(weg) {
@@ -23,7 +24,7 @@ double FahrenVerhalten::dStrecke(Fahrzeug &fzg, double dt) {
 	double dEffStrecke = vEff * dt;
 	double dRestStrecke = p_pWeg->dLaenge() - fzg.dAbschnittStrecke();
 
-	if (dRestStrecke <= 0) {
+	if (lessOrEqual(dRestStrecke, 0)) {
 		throw StreckenendeFahrausnahme(fzg, *p_pWeg);
 	}
 
