@@ -8,7 +8,8 @@
 #ifndef SRC_VERHALTEN_H_
 #define SRC_VERHALTEN_H_
 
-#include "Weg.h"
+class Weg;
+class Fahrzeug;
 
 // Basis-klasse
 class Verhalten {
@@ -20,9 +21,7 @@ public:
     virtual ~Verhalten() = default;
 
     virtual double dStrecke(Fahrzeug& fzg, double dZeitIntervall) = 0;
-    virtual Weg* getWeg() const {
-    	return p_pWeg;
-    }
+    virtual Weg* getWeg() const;
 };
 
 

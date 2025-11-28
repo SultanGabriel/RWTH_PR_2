@@ -41,6 +41,8 @@ public:
 	// Getters
 	double dTempolimit() const;
 	double dLaenge() const;
+    const std::list<std::unique_ptr<Fahrzeug>>& getFahrzeuge() const;
+
 };
 
 #endif /* SRC_WEG_H_ */

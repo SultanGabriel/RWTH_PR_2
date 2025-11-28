@@ -9,6 +9,7 @@
 
 
 #include "Fahrrad.h"
+#include "Weg.h"
 
 double Fahrrad::dGeschwindigkeit() const {
     double factor = std::pow(0.9, (p_dGesamtStrecke / 20.0));
@@ -28,4 +29,15 @@ void Fahrrad::vKopf() {
               << std::endl
               << std::setfill('-') << std::setw(80) << "-" << std::setfill(' ')
               << std::endl;
+}
+
+void Fahrrad::vZeichnen(const Weg& weg) const {
+    double rel = p_dAbschnittStrecke / weg.dLaenge();
+
+    bZeichneFahrrad(
+        this->getName(),
+        weg.getName(),
+        rel,
+        this->dGeschwindigkeit()
+    );
 }

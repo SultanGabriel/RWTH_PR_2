@@ -14,6 +14,8 @@
 #include <memory>
 #include <limits>
 
+#include "lib/SimuClient.h"
+
 #include "SimulationsObjekt.h"
 
 class Verhalten;
@@ -52,6 +54,8 @@ public:
 	virtual void vAusgeben(std::ostream &os) const override;
 
 	virtual void vSimulieren();
+	virtual void vZeichnen(const Weg& weg) const { // To be overwritten...
+		};
 
 	// Geschwindigkeit wird von Fahrrad überschrieben
 	virtual double dGeschwindigkeit() const {

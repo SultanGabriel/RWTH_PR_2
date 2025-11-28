@@ -22,6 +22,8 @@
 #include "Fahrrad.h"
 #include "Weg.h"
 
+#include "lib/SimuClient.h"
+
 
 static const int ANZAHL_AUFGABEN = 1;
 

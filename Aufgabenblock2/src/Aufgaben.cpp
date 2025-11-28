@@ -357,10 +357,20 @@ void vAufgabe6() {
 	std::cout << std::endl << "====        Aufgabe 6        ====" << std::endl;
 
 	dGlobaleZeit = 0.0;
-	const int maxI = 20;
+	const int maxI = 50;
 
-	Weg w1("Landstrasse_17", 120.5, Tempolimit::Landstrasse);
-	Weg w2("Autobahn_1", 120.5, Tempolimit::Autobahn);
+	// Grafik init
+	bInitialisiereGrafik(800, 600);
+
+	// Straßen
+	std::string w1Name = "L17";
+	std::string w2Name = "L71";
+	Weg w1(w1Name, 500, Tempolimit::Landstrasse);
+	Weg w2(w2Name, 500, Tempolimit::Landstrasse);
+
+	int coords[4] = { 700, 250, 100, 200 };
+	bZeichneStrasse(w1Name, w2Name, 500, 2, coords);
+
 	// Fahrendes Fahrzeug
 	auto fA1 = std::make_unique<PKW>("BMW", 200, 8, 65);
 	auto fB1 = std::make_unique<PKW>("Mercedes", 180, 8, 65);
@@ -385,10 +395,7 @@ void vAufgabe6() {
 	std::cout << "Simulationsbegin..." << std::endl;
 	for (int i = 0; i < maxI; i++) {
 		dGlobaleZeit += 0.25;
-
-		if (nearlyEqual(dGlobaleZeit, 2.5)) {
-			std::cout << "[WARN] Shit" << std::endl;
-		}
+		vSetzeZeit(dGlobaleZeit);
 
 		std::cout << std::endl << "Zeit: " << dGlobaleZeit << " (" << i + 1
 				<< "/" << maxI << ")" << std::endl;
@@ -399,7 +406,29 @@ void vAufgabe6() {
 		Weg::vKopf();
 		std::cout << w1 << std::endl;
 		std::cout << w2 << std::endl;
+		// Update Fahrzeuge
+		for (auto &fzg : w1.getFahrzeuge()) {
+			fzg->vZeichnen(w1);
+//			double rel = fzg->dAbschnittStrecke() / w1.dLaenge();
+//			bZeichnePKW(fzg->getName(), w1.getName(), rel,
+//					fzg->dGeschwindigkeit(),
+//					dynamic_cast<PKW*>(fzg.get()) ?
+//							dynamic_cast<PKW*>(fzg.get())->getTankinhalt() : 0);
+		}
+
+		for (auto &fzg : w2.getFahrzeuge()) {
+			fzg->vZeichnen(w2);
+//			double rel = fzg->dAbschnittStrecke() / w2.dLaenge();
+//			bZeichnePKW(fzg->getName(), w2.getName(), rel,
+//					fzg->dGeschwindigkeit(),
+//					dynamic_cast<PKW*>(fzg.get()) ?
+//							dynamic_cast<PKW*>(fzg.get())->getTankinhalt() : 0);
+		}
+
+
+		vSleep(100);
 	}
 
+	vBeendeGrafik();
 	std::cout << "=== Aufgabe 6 beendet ===" << std::endl;
 }

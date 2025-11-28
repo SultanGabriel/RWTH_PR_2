@@ -8,6 +8,8 @@
 #ifndef SRC_FAHRENVERHALTEN_H_
 #define SRC_FAHRENVERHALTEN_H_
 
+#include <algorithm>
+
 #include "Verhalten.h"
 #include "ausnahmen/StreckenendeFahrausnahme.h"
 

@@ -27,6 +27,9 @@ public:
 	}
 	void vAusgeben(std::ostream &os = std::cout) const override;
 	static void vKopf();
+
+	void vZeichnen(const Weg& weg) const override;
+
 };
 
 #endif /* FAHRRAD_H_ */

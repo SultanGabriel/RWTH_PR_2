@@ -11,7 +11,6 @@
 #include <limits>
 #include "Fahrzeug.h"
 
-
 class PKW: public Fahrzeug {
 private:
 	double p_dVerbrauch;    // L/100km
@@ -23,11 +22,17 @@ public:
 			55.0);
 	//virtual ~PKW()
 
-	double dTanken(double dMenge = std::numeric_limits<double>::infinity()) override;
+	double dTanken(double dMenge = std::numeric_limits<double>::infinity())
+			override;
 	void vSimulieren() override;
 	static void vKopf();
 	void vAusgeben(std::ostream &os = std::cout) const override;
+
 	double dGeschwindigkeit() const override;
+
+	double getTankinhalt() const;
+
+	void vZeichnen(const Weg& weg) const override;
 };
 
 #endif /* PKW_H_ */

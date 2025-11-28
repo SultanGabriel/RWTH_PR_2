@@ -7,6 +7,7 @@
 
 #include "FahrenVerhalten.h"
 #include "Fahrzeug.h"
+#include "Weg.h"
 
 FahrenVerhalten::FahrenVerhalten(Weg *weg) :
 		Verhalten(weg) {

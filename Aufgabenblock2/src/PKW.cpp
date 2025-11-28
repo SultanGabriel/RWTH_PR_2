@@ -7,9 +7,11 @@
 
 #include <iomanip>
 #include <iostream>
+#include <algorithm>
 
 #include "PKW.h"
 #include "Fahrzeug.h"
+#include "Weg.h"
 #include "Verhalten.h"
 
 PKW::PKW(const std::string &name, double vmax, double verbrauch, double tankvol) :
@@ -59,19 +61,25 @@ void PKW::vKopf() {
 			<< std::endl << std::setfill('-') << std::setw(80) << "-"
 			<< std::setfill(' ') << std::endl;
 }
+double PKW::getTankinhalt() const {
+	return p_dTankinhalt;
+}
 
 double PKW::dGeschwindigkeit() const {
     if (p_dTankinhalt <= 0)
         return 0;
 
     return p_dMaxGeschwindigkeit;
+}
 
-//    double v = p_dMaxGeschwindigkeit;
-//
-//	// Tempolimit nutzen
-//    if (p_pVerhalten && p_pVerhalten->getWeg()) {
-//        v = std::min(v, p_pVerhalten->getWeg()->dTempolimit());
-//    }
-//
-//    return v;
+void PKW::vZeichnen(const Weg& weg) const {
+    double rel = p_dAbschnittStrecke / weg.dLaenge();
+
+    bZeichnePKW(
+        this->getName(),
+        weg.getName(),
+        rel,
+        this->dGeschwindigkeit(),
+        this->getTankinhalt()
+    );
 }
