@@ -376,8 +376,8 @@ void vAufgabe6() {
 	auto fB1 = std::make_unique<PKW>("Mercedes", 180, 8, 65);
 
 	// Parkendes Fahrzeug, das ab Zeit 2.0 startet
-	auto fA2 = std::make_unique<PKW>("Audi", 190, 7, 55);
-	auto fB2 = std::make_unique<PKW>("VW", 180, 7, 55);
+	auto fA2 = std::make_unique<PKW>("Audi", 190, 7, 75);
+	auto fB2 = std::make_unique<PKW>("VW", 180, 5, 75);
 
 	w1.vAnnahme(std::move(fA1));           // fahrend
 	w1.vAnnahme(std::move(fA2), 2.75);      // parken mit Startzeit

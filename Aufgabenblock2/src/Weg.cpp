@@ -56,14 +56,16 @@ void Weg::vAusgeben(std::ostream &os) const {
 }
 
 void Weg::vSimulieren() {
-	for (auto &fzg : p_pFahrzeuge) {
+	for (auto it = p_pFahrzeuge.begin(); it != p_pFahrzeuge.end(); ++it) {
 		try {
-			fzg->vSimulieren();
-		} catch (Fahrausnahme &e) {
-			e.vBearbeiten();
+			(*it)->vSimulieren();
+		} catch (Fahrausnahme &exception) {
+			exception.vBearbeiten();
 		}
-
 	}
+
+	// Aktualisieren
+	p_pFahrzeuge.vAktualisieren();
 }
 
 double Weg::dTempolimit() const {
@@ -84,6 +86,10 @@ double Weg::dLaenge() const {
 	return p_dLaenge;
 }
 
+const vertagt::VListe<std::unique_ptr<Fahrzeug>>& Weg::getFahrzeuge() const {
+	return p_pFahrzeuge;
+}
+
 void Weg::vAnnahme(std::unique_ptr<Fahrzeug> fzg) {
 	fzg->vNeueStrecke(this);
 	p_pFahrzeuge.push_back(std::move(fzg));
@@ -94,6 +100,19 @@ void Weg::vAnnahme(std::unique_ptr<Fahrzeug> fzg, double startzeit) {
 	p_pFahrzeuge.push_front(std::move(fzg));
 }
 
-const std::list<std::unique_ptr<Fahrzeug>>& Weg::getFahrzeuge() const {
-	return p_pFahrzeuge;
+std::unique_ptr<Fahrzeug> Weg::pAbgabe(const Fahrzeug &f) {
+	for (auto it = p_pFahrzeuge.begin(); it != p_pFahrzeuge.end(); ++it) {
+		Fahrzeug &fzg = **it; // Doppelte dereferenz, iterator->unique_ptr->Fahrzeug Objekt
+
+		if (fzg == f) {
+			std::unique_ptr<Fahrzeug> tempFzg = std::move(*it);
+
+			p_pFahrzeuge.erase(it);
+
+			return tempFzg;
+		}
+	}
+
+	return nullptr;
+
 }

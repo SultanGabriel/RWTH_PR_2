@@ -12,4 +12,7 @@
 void StreckenendeFahrausnahme::vBearbeiten() {
 	std::cout << "[AUSNAHME] [Streckenende] " << p_rFahrzeug.getName()
 			<< " auf Weg " << p_rWeg.getName() << std::endl;
+
+	// Fzg entfehrnen
+	p_rWeg.pAbgabe(p_rFahrzeug);
 }

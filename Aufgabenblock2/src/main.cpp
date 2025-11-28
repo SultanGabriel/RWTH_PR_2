@@ -27,8 +27,8 @@ int main() {
 //	vAufgabe_AB1();
 //	vAufgabe4();
 //	vAufgabe5();
-//	vAufgabe6();
-	vAufgabe6a();
+	vAufgabe6();
+//	vAufgabe6a();
 
 	std::cout << "====== The application is shutting down ======" << std::endl;
 	std::cout << "====== Developer: Gabriel Sultan        ======" << std::endl;
