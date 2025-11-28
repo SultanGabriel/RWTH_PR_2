@@ -62,7 +62,6 @@ void vAufgabe1() {
 	/*
 	 * In dem Vektor können die Fahrzeuge, die mt unique_ptr erstellt wurden
 	 * gespeichert werden. Die Besitzübertragung muss per move() stattfinden
-	 *
 	 */
 	std::vector<std::unique_ptr<Fahrzeug>> vecUnique;
 
@@ -262,8 +261,8 @@ void vAufgabe3() {
 		std::cout << "pkw1 ist langsamer (weniger Strecke) als pkw2"
 				<< std::endl;
 
-	// Copy-Konstruktor verboten (prüfbar per Compiler-Fehler)
-	// Fahrzeug f2 = f1; // ❌ sollte nicht kompilieren
+	// Copy-Konstruktor verboten
+	// Fahrzeug f2 = f1; // kann nicht kompilieren
 
 	// Zuweisung
 	PKW pkw3("VW", 160, 7);
