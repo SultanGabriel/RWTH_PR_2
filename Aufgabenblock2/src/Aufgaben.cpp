@@ -319,7 +319,7 @@ void vAufgabe4() {
 	Weg w1("Landstrasse_17", 12.5, Tempolimit::Landstrasse);
 
 	std::cout << w1 << std::endl;
-	std::cout << "=== Aufgabe 4 beendet ===" << std::endl;
+	std::cout << "=== Aufgabe 4 abgeschlossen ===" << std::endl;
 }
 
 void vAufgabe5() {
@@ -350,7 +350,7 @@ void vAufgabe5() {
 		dGlobaleZeit += 0.5;
 	}
 
-	std::cout << "=== Aufgabe 5 beendet ===" << std::endl;
+	std::cout << "=== Aufgabe 5 abgeschlossen ===" << std::endl;
 }
 
 void vAufgabe6() {
@@ -430,5 +430,60 @@ void vAufgabe6() {
 	}
 
 	vBeendeGrafik();
-	std::cout << "=== Aufgabe 6 beendet ===" << std::endl;
+	std::cout << "=== Aufgabe 6 abgeschlossen ===" << std::endl;
+}
+
+
+void vAufgabe6a() {
+	std::cout << std::endl << "====        Aufgabe 6a       ====" << std::endl;
+
+	// Random generator init
+	static std::mt19937 device(0);
+	std::uniform_int_distribution<int> dist(1,10);
+
+	// Variables
+	const int N = 20;
+
+	vertagt::VListe<int> liste;
+
+	for (int i = 0;i < N; i++){
+		liste.push_back(dist(device));
+	}
+	liste.vAktualisieren();
+
+	std::cout << "--- Originale Liste ---" << std::endl;
+	printVList(liste);
+
+	std::cout << "--- Objekte > 5 loeschen ---" << std::endl;
+	 for (auto it = liste.begin(); it != liste.end(); ++it)
+	    {
+	        if (*it > 5)
+	        {
+	            liste.erase(it);   // Diese Operation wird nur gespeichert!
+	        }
+	    }
+
+
+	std::cout << "--- Liste nach erase, VOR vAktualisieren()  ---" << std::endl;
+	printVList(liste);
+
+	liste.vAktualisieren();
+	std::cout << "--- Liste nach vAktualisieren()  ---" << std::endl;
+	printVList(liste);
+
+	std::cout << "--- 4 neue Elemente werden hinzugefuegt  ---" << std::endl;
+	liste.push_back(98);
+	liste.push_back(99);
+
+	liste.push_front(1);
+	liste.push_front(0);
+
+	std::cout << "--- Liste nach hinzufuegen der Elemente, VOR vAktualisieren()  ---" << std::endl;
+	printVList(liste);
+
+	liste.vAktualisieren();
+	std::cout << "--- Liste nach vAktualisieren()  ---" << std::endl;
+	printVList(liste);
+
+	std::cout << "=== Aufgabe 6a abgeschlossen ===" << std::endl;
 }

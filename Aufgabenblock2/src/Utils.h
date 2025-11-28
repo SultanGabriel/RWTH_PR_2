@@ -16,6 +16,8 @@
 #include <limits>
 #include <cmath>
 
+#include "lib/vertagt_liste.h"
+
 class PKW;
 class Fahrrad;
 class Fahrzeug;
@@ -42,5 +44,8 @@ constexpr double EPSILON = 1e-6;
 bool nearlyEqual(double a, double b, double epsilon = EPSILON);
 bool greaterOrEqual(double a, double b, double epsilon = EPSILON);
 bool lessOrEqual(double a, double b, double epsilon = EPSILON);
+
+// VListe
+void printVList(const vertagt::VListe<int> &liste);
 
 #endif /* UTILS_H_ */
