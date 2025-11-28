@@ -14,6 +14,9 @@
 
 #include "Logger.h"
 #include "SimulationsObjekt.h"
+#include "Verhalten.h"
+#include "FahrenVerhalten.h"
+#include "ParkenVerhalten.h"
 
 // Globals
 extern double dGlobaleZeit;
@@ -23,9 +26,11 @@ protected:
 	const double p_dMaxGeschwindigkeit;     // maximale Geschwindigkeit
 	double p_dGesamtStrecke;
 	double p_dGesamtZeit;
+	std::unique_ptr<Verhalten> p_pVerhalten;
+	double p_dAbschnittStrecke;
 
 public:
-	// Konstruktor
+	// ---       Konstruktor       ---
 	Fahrzeug();
 	Fahrzeug(const std::string &name);
 	Fahrzeug(const std::string &name, const double maxGeschw);
@@ -37,7 +42,7 @@ public:
 	// Virtueller Destruktor
 	virtual ~Fahrzeug();
 
-	// Methods
+	// ---         Methods         ---
 	static void vKopfDef(); // default kopf dings fixme look at this
 	static void vKopf();
 
@@ -50,10 +55,18 @@ public:
 		return p_dMaxGeschwindigkeit;
 	}
 
+	virtual double dAbschnittStrecke() const {
+		return p_dAbschnittStrecke;
+	}
+
 	// Tankfunktion
 	virtual double dTanken(double dMenge =
 			std::numeric_limits<double>::infinity());
 
+	void vNeueStrecke(Weg* weg);
+	void vNeueStrecke(Weg* weg, double startzeit);
+
+	// ---       Operatoren       ---
 	// Operator "<"
 	bool operator<(const Fahrzeug &rhs) const;
 

@@ -35,9 +35,12 @@ public:
 	virtual void vAusgeben(std::ostream &os) const override;
 	void vSimulieren() override;
 
+	void vAnnahme(std::unique_ptr<Fahrzeug> fzg);
+	void vAnnahme(std::unique_ptr<Fahrzeug> fzg, double startzeit); // Annahme für Parkende fzg
+
 	// Getters
-	double getTempolimit() const;
-	double getLaenge() const;
+	double dTempolimit() const;
+	double dLaenge() const;
 };
 
 #endif /* SRC_WEG_H_ */

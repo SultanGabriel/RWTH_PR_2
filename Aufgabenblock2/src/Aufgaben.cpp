@@ -326,3 +326,37 @@ void vAufgabe4() {
     std::cout << w1 << std::endl;
 	std::cout << "=== Aufgabe 4 beendet ===" << std::endl;
 }
+
+void vAufgabe5() {
+	std::cout << std::endl << "====        Aufgabe 5        ====" << std::endl;
+
+    Weg w("Landstrasse_17", 12.5, Tempolimit::Landstrasse);
+    // Fahrendes Fahrzeug
+    auto f1 = std::make_unique<PKW>("BMW", 200, 8, 65);
+
+    // Parkendes Fahrzeug, das ab Zeit 2.0 startet
+    auto f2 = std::make_unique<PKW>("Audi", 180, 7, 55);
+
+    w.vAnnahme(std::move(f1));           // fahrend
+    w.vAnnahme(std::move(f2), 2.0);      // parken mit Startzeit
+
+    std::cout << "Simulationsbegin...\n";
+
+	std::cout << "Simulationsbegin..." << std::endl;
+	   Weg::vKopf();
+
+	    const int maxI = 10;
+	    for (int i = 0; i < maxI; i++) {
+	        w.vSimulieren();
+
+	        std::cout << "\nZeit: " << dGlobaleZeit
+	                  << " (" << i+1 << "/" << maxI << ")\n";
+
+	        Weg::vKopf();
+	        std::cout << w << std::endl;
+
+	        dGlobaleZeit += 0.5;
+	    }
+
+	std::cout << "=== Aufgabe 5 beendet ===" << std::endl;
+}
