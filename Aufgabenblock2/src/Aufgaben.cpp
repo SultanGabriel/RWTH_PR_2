@@ -374,14 +374,14 @@ void vAufgabe6() {
 	auto fB1 = std::make_unique<PKW>("Mercedes", 180, 8, 65);
 
 	// Parkendes Fahrzeug, das ab Zeit 2.0 startet
-	auto fA2 = std::make_unique<PKW>("Audi", 190, 7, 75);
+	auto fA2 = std::make_unique<PKW>("AAudi", 190, 7, 75);
 	auto fB2 = std::make_unique<PKW>("VW", 180, 5, 75);
 
 	w1.vAnnahme(std::move(fA1));           // fahrend
-	w1.vAnnahme(std::move(fA2), 2.75);      // parken mit Startzeit
+	w1.vAnnahme(std::move(fA2), 3);      // parken mit Startzeit
 
-	w2.vAnnahme(std::move(fB1));           // fahrend
-	w2.vAnnahme(std::move(fB2), 3.75);      // parken mit Startzeit
+//	w2.vAnnahme(std::move(fB1));           // fahrend
+//	w2.vAnnahme(std::move(fB2), 3.75);      // parken mit Startzeit
 
 	std::cout << std::endl << "Zeit: " << dGlobaleZeit << " (0/" << maxI << ")"
 			<< std::endl;
@@ -392,7 +392,7 @@ void vAufgabe6() {
 
 	std::cout << "Simulationsbegin..." << std::endl;
 	for (int i = 0; i < maxI; i++) {
-		dGlobaleZeit += 0.25;
+		dGlobaleZeit += 0.3;
 		vSetzeZeit(dGlobaleZeit);
 
 		std::cout << std::endl << "Zeit: " << dGlobaleZeit << " (" << i + 1
