@@ -10,6 +10,7 @@
 
 #include <limits>
 #include "Fahrzeug.h"
+#include "ausnahmen/LiegenGebliebenFahrausnahme.h"
 
 class PKW: public Fahrzeug {
 private:
@@ -30,7 +31,8 @@ public:
 
 	double dGeschwindigkeit() const override;
 
-	double getTankinhalt() const;
+	double getTankinhalt() const; // FIXME consider renaming
+	double dTankvolumen() const;
 
 	void vZeichnen(const Weg& weg) const override;
 };

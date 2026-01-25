@@ -95,14 +95,11 @@ void Fahrzeug::vAusgeben(std::ostream &os) const {
 }
 
 void Fahrzeug::vSimulieren() {
-	// sanity check if logic is wrong then it say inconsole. How do you say it....
-	// Praktisch!
 	if (p_dZeit == dGlobaleZeit) {
 		std::cout << "[WARN] Extensive vSimulieren call" << std::endl;
 		return;
 	}
 
-	// sanity check to be honest, shall never happen, but i wanna catch it fast:)
 	if (p_pVerhalten == nullptr) {
 		std::cout << "[WARN] Shit p_pVerhalten == nullptr" << std::endl;
 		return;
@@ -130,4 +127,8 @@ void Fahrzeug::vNeueStrecke(Weg *weg) {
 void Fahrzeug::vNeueStrecke(Weg* weg, double startzeit) {
     p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
     p_dAbschnittStrecke = 0;
+}
+
+VerhaltenTyp Fahrzeug::tVerhaltenTyp(){
+	return p_pVerhalten->tVerhaltenTyp();
 }

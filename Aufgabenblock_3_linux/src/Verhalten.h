@@ -11,19 +11,25 @@
 class Weg;
 class Fahrzeug;
 
-// Basis-klasse
-class Verhalten {
-protected:
-    Weg* p_pWeg;
-
-public:
-    Verhalten(Weg* weg) : p_pWeg(weg) {}
-    virtual ~Verhalten() = default;
-
-    virtual double dStrecke(Fahrzeug& fzg, double dZeitIntervall) = 0;
-    virtual Weg* getWeg() const;
+enum class VerhaltenTyp {
+	INIT_VERHALTEN, PARKEN_VERHALTEN, FAHREN_VERHALTEN
 };
 
+// Basis-klasse
+class Verhalten {
+private:
+	Weg *p_pWeg;
+	VerhaltenTyp p_tVerhaltenTyp;
 
+public:
+	Verhalten(Weg *weg,
+			VerhaltenTyp verhaltenTyp = VerhaltenTyp::INIT_VERHALTEN);
+	virtual ~Verhalten() = default;
+
+	virtual double dStrecke(Fahrzeug &fzg, double dZeitIntervall) = 0;
+
+	Weg* getWeg() const; // FIXME consider renaming
+	VerhaltenTyp tVerhaltenTyp() ;
+};
 
 #endif /* SRC_VERHALTEN_H_ */

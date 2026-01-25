@@ -18,6 +18,7 @@
 
 #include "SimulationsObjekt.h"
 
+enum class VerhaltenTyp;
 class Verhalten;
 class FahrenVerhalten;
 class ParkenVerhalten;
@@ -69,6 +70,8 @@ public:
 	// Tankfunktion
 	virtual double dTanken(double dMenge =
 			std::numeric_limits<double>::infinity());
+
+	VerhaltenTyp tVerhaltenTyp ();
 
 	void vNeueStrecke(Weg* weg);
 	void vNeueStrecke(Weg* weg, double startzeit);

@@ -12,7 +12,6 @@
 #include "Aufgaben.h"
 #include "Utils.h"
 
-double dGlobaleZeit = 0.0;
 
 int main() {
 	std::cout << "====== The application is initializing ======" << std::endl;
@@ -27,7 +26,7 @@ int main() {
 //	vAufgabe_AB1();
 //	vAufgabe4();
 //	vAufgabe5();
-	vAufgabe6();
+	vAufgabeCustom();
 //	vAufgabe6a();
 
 	std::cout << "====== The application is shutting down ======" << std::endl;

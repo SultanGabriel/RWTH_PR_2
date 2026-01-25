@@ -351,8 +351,8 @@ void vAufgabe5() {
 	std::cout << "=== Aufgabe 5 abgeschlossen ===" << std::endl;
 }
 
-void vAufgabe6() {
-	std::cout << std::endl << "====        Aufgabe 6        ====" << std::endl;
+void vAufgabeCustom() {
+	std::cout << std::endl << "====        Aufgabe CUSTOM   ====" << std::endl;
 
 	dGlobaleZeit = 0.0;
 	const int maxI = 50;
@@ -369,19 +369,47 @@ void vAufgabe6() {
 	int coords[4] = { 700, 250, 100, 200 };
 	bZeichneStrasse(w1Name, w2Name, 500, 2, coords);
 
+	std::string w3Name = "L13";
+	std::string w4Name = "L31";
+	Weg w3(w3Name, 500, Tempolimit::Landstrasse, false);
+	Weg w4(w4Name, 500, Tempolimit::Landstrasse,false);
+
+	coords[0] = 100;
+	coords[1] = 350;
+	coords[2] = 700;
+	coords[3] = 400;
+	bZeichneStrasse(w3Name, w4Name, 300, 2, coords);
+
 	// Fahrendes Fahrzeug
-	auto fA1 = std::make_unique<PKW>("BMW", 200, 8, 65);
-	auto fB1 = std::make_unique<PKW>("Mercedes", 180, 8, 65);
+	auto fA1 = std::make_unique<PKW>("BMW", 70, 2, 65);
+	auto fB1 = std::make_unique<PKW>("Mercedes", 50, 2, 64);
 
 	// Parkendes Fahrzeug, das ab Zeit 2.0 startet
-	auto fA2 = std::make_unique<PKW>("AAudi", 190, 7, 75);
-	auto fB2 = std::make_unique<PKW>("VW", 180, 5, 75);
+	auto fA2 = std::make_unique<PKW>("AAudi", 190, 11, 75);
+	auto fB2 = std::make_unique<PKW>("VW", 180, 2, 75);
 
+
+	auto fA3= std::make_unique<Fahrrad>("Fahrrad", 50);
+	w1.vAnnahme(std::move(fA3));           // fahrend FAHRRAD als erstes
 	w1.vAnnahme(std::move(fA1));           // fahrend
-	w1.vAnnahme(std::move(fA2), 3);      // parken mit Startzeit
+	w1.vAnnahme(std::move(fA2), 1.25);      // parken mit Startzeit
 
-//	w2.vAnnahme(std::move(fB1));           // fahrend
-//	w2.vAnnahme(std::move(fB2), 3.75);      // parken mit Startzeit
+	w2.vAnnahme(std::move(fB1));           // fahrend
+	w2.vAnnahme(std::move(fB2), 0.75);      // parken mit Startzeit
+
+	int ANZAHL_FAHRZEUGE_L13 = 4;
+	for (int i = 0; i < ANZAHL_FAHRZEUGE_L13; i++) {
+		auto f = std::make_unique<PKW>("PKW_" + i, 120, 7, 32);
+
+		if (ANZAHL_FAHRZEUGE_L13 * 0.5 < i) {
+			auto fA = std::make_unique<Fahrrad>("Bicicleta", 50);
+			w3.vAnnahme(std::move(f));
+			w3.vAnnahme(std::move(fA));
+		} else {
+			w4.vAnnahme(std::move(f));
+		}
+
+	}
 
 	std::cout << std::endl << "Zeit: " << dGlobaleZeit << " (0/" << maxI << ")"
 			<< std::endl;
@@ -389,6 +417,8 @@ void vAufgabe6() {
 	Weg::vKopf();
 	std::cout << w1 << std::endl;
 	std::cout << w2 << std::endl;
+	std::cout << w3 << std::endl;
+	std::cout << w4 << std::endl;
 
 	std::cout << "Simulationsbegin..." << std::endl;
 	for (int i = 0; i < maxI; i++) {
@@ -400,10 +430,14 @@ void vAufgabe6() {
 
 		w1.vSimulieren();
 		w2.vSimulieren();
+		w3.vSimulieren();
+		w4.vSimulieren();
 
 		Weg::vKopf();
 		std::cout << w1 << std::endl;
 		std::cout << w2 << std::endl;
+		std::cout << w4 << std::endl;
+		std::cout << w4 << std::endl;
 		// Update Fahrzeuge
 		for (auto &fzg : w1.getFahrzeuge()) {
 			fzg->vZeichnen(w1);
@@ -422,7 +456,12 @@ void vAufgabe6() {
 //					dynamic_cast<PKW*>(fzg.get()) ?
 //							dynamic_cast<PKW*>(fzg.get())->getTankinhalt() : 0);
 		}
-
+		for (auto &fzg : w3.getFahrzeuge()) {
+			fzg->vZeichnen(w3);
+		}
+		for (auto &fzg : w4.getFahrzeuge()) {
+			fzg->vZeichnen(w4);
+		}
 
 		vSleep(100);
 	}
@@ -431,20 +470,19 @@ void vAufgabe6() {
 	std::cout << "=== Aufgabe 6 abgeschlossen ===" << std::endl;
 }
 
-
 void vAufgabe6a() {
 	std::cout << std::endl << "====        Aufgabe 6a       ====" << std::endl;
 
 	// Random generator init
 	static std::mt19937 device(0);
-	std::uniform_int_distribution<int> dist(1,10);
+	std::uniform_int_distribution<int> dist(1, 10);
 
 	// Variables
 	const int N = 20;
 
 	vertagt::VListe<int> liste;
 
-	for (int i = 0;i < N; i++){
+	for (int i = 0; i < N; i++) {
 		liste.push_back(dist(device));
 	}
 	liste.vAktualisieren();
@@ -453,14 +491,11 @@ void vAufgabe6a() {
 	printVList(liste);
 
 	std::cout << "--- Objekte > 5 loeschen ---" << std::endl;
-	 for (auto it = liste.begin(); it != liste.end(); ++it)
-	    {
-	        if (*it > 5)
-	        {
-	            liste.erase(it);   // Diese Operation wird nur gespeichert!
-	        }
-	    }
-
+	for (auto it = liste.begin(); it != liste.end(); ++it) {
+		if (*it > 5) {
+			liste.erase(it);   // Diese Operation wird nur gespeichert!
+		}
+	}
 
 	std::cout << "--- Liste nach erase, VOR vAktualisieren()  ---" << std::endl;
 	printVList(liste);
@@ -476,7 +511,9 @@ void vAufgabe6a() {
 	liste.push_front(1);
 	liste.push_front(0);
 
-	std::cout << "--- Liste nach hinzufuegen der Elemente, VOR vAktualisieren()  ---" << std::endl;
+	std::cout
+			<< "--- Liste nach hinzufuegen der Elemente, VOR vAktualisieren()  ---"
+			<< std::endl;
 	printVList(liste);
 
 	liste.vAktualisieren();
@@ -484,4 +521,26 @@ void vAufgabe6a() {
 	printVList(liste);
 
 	std::cout << "=== Aufgabe 6a abgeschlossen ===" << std::endl;
+}
+
+void vMapTest()
+{
+    Simulation sim;
+
+    auto A = std::make_shared<Kreuzung>("A", 100.0);
+    sim.vRegistriereKreuzung(A);
+
+    // Duplikat-Test
+    try {
+        sim.vRegistriereKreuzung(std::make_shared<Kreuzung>("A", 0.0));
+    } catch (const std::runtime_error& e) {
+        std::cout << "OK Duplikat abgefangen: " << e.what() << "\n";
+    }
+
+    // Lookup-Test
+    try {
+        sim.pKreuzung("DOES_NOT_EXIST");
+    } catch (const std::runtime_error& e) {
+        std::cout << "OK Lookup abgefangen: " << e.what() << "\n";
+    }
 }

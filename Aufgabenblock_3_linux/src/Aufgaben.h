@@ -16,12 +16,15 @@
 #include <algorithm>
 #include <random>
 
+#include "globals.h"
+
 #include "Fahrzeug.h"
 #include "Logger.h"
 #include "Utils.h"
 #include "PKW.h"
 #include "Fahrrad.h"
 #include "Weg.h"
+#include "Simulation.h"
 
 #include "lib/SimuClient.h"
 #include "lib/vertagt_liste.h"
@@ -35,11 +38,13 @@ void vAufgabe2();
 void vAufgabe3();
 void vAufgabe4();
 void vAufgabe5();
-void vAufgabe6();
+void vAufgabeCustom();
 void vAufgabe6a();
 
 void vAufgabe_AB1();
 
 void vAufgabe1a();
+
+void vMapTest();
 
 #endif /* AUFGABEN_H_ */

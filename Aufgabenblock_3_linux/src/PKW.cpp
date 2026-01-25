@@ -10,9 +10,12 @@
 #include <algorithm>
 
 #include "PKW.h"
+#include "Utils.h"
 #include "Fahrzeug.h"
 #include "Weg.h"
 #include "Verhalten.h"
+
+//#include "ausnahmen/LiegenGebliebenFahrausnahme.h"
 
 PKW::PKW(const std::string &name, double vmax, double verbrauch, double tankvol) :
 				Fahrzeug(name, vmax),
@@ -44,8 +47,12 @@ void PKW::vSimulieren() {
 	if (deltaS > 0.0) {
 		double dVerbraucht = deltaS * (p_dVerbrauch / 100.0);
 		p_dTankinhalt -= dVerbraucht;
-		if (p_dTankinhalt < 0.0)
+		if (lessOrEqual(p_dTankinhalt, 0.0)) {
+
 			p_dTankinhalt = 0.0;
+			throw LiegenGebliebenFahrausnahme(*this, *p_pVerhalten->getWeg());
+		}
+//			throw FIXME ?
 	}
 }
 
@@ -63,6 +70,9 @@ void PKW::vKopf() {
 }
 double PKW::getTankinhalt() const {
 	return p_dTankinhalt;
+}
+double PKW::dTankvolumen() const {
+	return p_dTankvolumen;
 }
 
 double PKW::dGeschwindigkeit() const {

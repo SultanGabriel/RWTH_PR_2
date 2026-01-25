@@ -10,29 +10,34 @@
 #include "Weg.h"
 #include "Fahrzeug.h"
 #include "ausnahmen/Fahrausnahme.h"
+#include "Utils.h"
+#include "Verhalten.h"
+#include "Kreuzung.h"
+
+//enum class VerhaltenTyp;
 
 Weg::Weg() :
 				SimulationsObjekt::SimulationsObjekt(""),
 					p_dLaenge(0),
-					p_eTempolimit(Tempolimit::Autobahn) ,
-					p_bUeberholVerbot(false) {
+					p_dVirtuelleSchranke(0),
+					p_bUeberholVerbot(true),
+					p_eTempolimit(Tempolimit::Autobahn) {
 	// Leer
 }
 
-Weg::Weg(std::string name, double laenge, Tempolimit limit) :
+Weg::Weg(std::string name, double laenge, Tempolimit limit, bool ueberholverbot,
+		std::shared_ptr<Kreuzung> ziel) :
 				SimulationsObjekt::SimulationsObjekt(name),
 					p_dLaenge(laenge),
+					p_dVirtuelleSchranke(laenge),
+					p_bUeberholVerbot(ueberholverbot),
 					p_eTempolimit(limit),
-					p_bUeberholVerbot(false) {
+					p_pZielKreuzung(ziel) {
 	// Leer
-}
-
-Weg::Weg(std::string name, double laenge, Tempolimit limit,bool ueberholverbot) :
-				SimulationsObjekt::SimulationsObjekt(name),
-					p_dLaenge(laenge),
-					p_eTempolimit(limit),
-					p_bUeberholVerbot(ueberholverbot) {
-	// Leer
+//	 if (ziel)
+//	    {
+//	        p_pZielKreuzung = ziel; // weak_ptr bekommt shared_ptr zugewiesen
+//	    }
 }
 
 Weg::~Weg() {
@@ -49,7 +54,7 @@ void Weg::vKopf() {
 void Weg::vAusgeben(std::ostream &os) const {
 	SimulationsObjekt::vAusgeben(os);
 
-	os << std::left << std::setw(10) << p_dLaenge << " (";
+	os << std::left << std::setw(10) << dLaenge() << " (";
 
 	bool first = true;
 	for (const std::unique_ptr<Fahrzeug> &fzg : p_pFahrzeuge) {
@@ -66,9 +71,27 @@ void Weg::vAusgeben(std::ostream &os) const {
 }
 
 void Weg::vSimulieren() {
+    p_dVirtuelleSchranke = p_dLaenge;
+
 	for (auto it = p_pFahrzeuge.begin(); it != p_pFahrzeuge.end(); ++it) {
+//	for (auto it = p_pFahrzeuge.end(); it != p_pFahrzeuge.begin(); ) {
+//--it;
 		try {
-			(*it)->vSimulieren();
+
+			auto &fzg = *it;
+			fzg->vSimulieren();
+
+//			double streckeGefahren = fzg->dAbschnittStrecke();
+
+			//if (!p_bGestartet && greaterOrEqual(dGlobaleZeit, p_dStartzeit)) {
+			if (p_bUeberholVerbot
+					&& fzg->tVerhaltenTyp() == VerhaltenTyp::FAHREN_VERHALTEN) {
+				p_dVirtuelleSchranke = fzg->dAbschnittStrecke() - 10; // FIXME make adjustable
+				std::cout << "Uberholverbot fml " << fzg->getName() << " "
+						<< " " << p_dVirtuelleSchranke
+						<< std::endl;
+			}
+
 		} catch (Fahrausnahme &exception) {
 			exception.vBearbeiten();
 		}
@@ -99,6 +122,13 @@ double Weg::dLaenge() const {
 const vertagt::VListe<std::unique_ptr<Fahrzeug>>& Weg::getFahrzeuge() const {
 	return p_pFahrzeuge;
 }
+std::shared_ptr<Kreuzung> Weg::pZielKreuzung() const {
+    return p_pZielKreuzung.lock();
+}
+
+std::shared_ptr<Weg> Weg::pRueckweg() const {
+    return p_pRueckweg.lock();
+}
 
 void Weg::vAnnahme(std::unique_ptr<Fahrzeug> fzg) {
 	fzg->vNeueStrecke(this);
@@ -125,4 +155,10 @@ std::unique_ptr<Fahrzeug> Weg::pAbgabe(const Fahrzeug &f) {
 
 	return nullptr;
 
+}
+
+double Weg::dVirtuelleSchranke() const {
+	// Wenn Uberholverbot gilt, dann die virtuelle schranke, sonst
+	return p_bUeberholVerbot ? p_dVirtuelleSchranke : p_dLaenge;
+//	return p_dVirtuelleSchranke;
 }
