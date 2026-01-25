@@ -14,10 +14,24 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <fstream>
+#include <string>
+#include <stdexcept>
+
+#include "Utils.h"
 
 // Forward declarations
 class Kreuzung;
 
+
+//struct StrassenGrafik
+//{
+//    std::string hin;
+//    std::string rueck;
+//    int laenge;
+//    int nPaare;
+//    std::vector<int> coords; // [x1,y1,x2,y2,...]
+//};
 class Simulation {
 private:
     bool p_bMitGrafik = false;
@@ -33,12 +47,10 @@ public:
 	~Simulation();
 
 
-	void set
-
-
 	std::shared_ptr<Kreuzung> pKreuzung(const std::string &name) const;
 
 
+	void vEinlesen(const std::string& datei, bool bMitGrafik = false);
 	void vGrafikAufbauen();
 
 

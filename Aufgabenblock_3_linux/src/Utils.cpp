@@ -11,6 +11,9 @@
 #include "Fahrrad.h"
 #include "Fahrzeug.h"
 
+#include <vector>
+#include <stdexcept>
+
 // ------------------------------------------------------
 
 void vAusgabeTabelle(const std::vector<std::unique_ptr<Fahrzeug>> &fahrzeuge) {
@@ -158,3 +161,44 @@ void printVList(const vertagt::VListe<int> &liste) {
 	std::cout << std::endl;
 }
 
+
+std::vector<std::string> split(const std::string& s, const std::string& delim = " ") {
+    if (delim.empty()) {
+        throw std::invalid_argument("split: delimiter must not be empty");
+    }
+
+    std::vector<std::string> out;
+    std::size_t start = 0;
+
+    while (true) {
+        const std::size_t pos = s.find(delim, start);
+
+        if (pos == std::string::npos) {
+            out.emplace_back(s.substr(start));
+            break;
+        }
+
+        out.emplace_back(s.substr(start, pos - start));
+        start = pos + delim.size();
+
+        // If delimiter ends the string -> trailing empty token
+        if (start == s.size()) {
+            out.emplace_back("");
+            break;
+        }
+    }
+
+    return out;
+}
+
+std::string getFirstToken(const std::string& s, const std::string& delim = " ") {
+    if (delim.empty()) {
+        throw std::invalid_argument("getFirstToken: delimiter must not be empty");
+    }
+
+    const std::size_t pos = s.find(delim);
+    if (pos == std::string::npos) {
+        return s;            // whole string is the first token
+    }
+    return s.substr(0, pos); // prefix before first delimiter
+}

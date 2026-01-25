@@ -16,8 +16,6 @@
 #include <algorithm>
 #include <random>
 
-#include "globals.h"
-
 #include "Fahrzeug.h"
 #include "Logger.h"
 #include "Utils.h"
@@ -39,7 +37,9 @@ void vAufgabe3();
 void vAufgabe4();
 void vAufgabe5();
 void vAufgabeCustom();
+void vAufgabe6();
 void vAufgabe6a();
+void vAufgabe7();
 
 void vAufgabe_AB1();
 

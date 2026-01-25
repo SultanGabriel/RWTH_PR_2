@@ -6,6 +6,14 @@
  */
 
 #include "Aufgaben.h"
+#include "Kreuzung.h"
+#include "SimulationsObjekt.h"
+#include <vector>
+
+
+//using namespace std;
+extern double dGlobaleZeit;
+extern int FRAME_SLEEP;
 
 void vAufgabe1() {
 	// Print a newline at the start of the exercise
@@ -273,20 +281,17 @@ void vAufgabe3() {
 
 // ---
 
-using namespace std;
-extern double dGlobaleZeit;
-
 void vAufgabe_AB1() {
 
 	int l = 0; // Laufindex für gezielte AUsgabe
-	vector<int> ausgabe { 13 };
+	std::vector<int> ausgabe { 13 };
 	double dTakt = 0.4;
 
-	std::vector<unique_ptr<Fahrzeug>> vecFahrzeuge;
-	vecFahrzeuge.push_back(make_unique<PKW>("Audi", 217, 10.7));
-	vecFahrzeuge.push_back(make_unique<Fahrrad>("BMX", 21.4));
+	std::vector<std::unique_ptr<Fahrzeug>> vecFahrzeuge;
+	vecFahrzeuge.push_back(std::make_unique<PKW>("Audi", 217, 10.7));
+	vecFahrzeuge.push_back(std::make_unique<Fahrrad>("BMX", 21.4));
 	for (dGlobaleZeit = 0; dGlobaleZeit < 6; dGlobaleZeit += dTakt) {
-		auto itL = find(ausgabe.begin(), ausgabe.end(), l);
+		auto itL = std::find(ausgabe.begin(), ausgabe.end(), l);
 		if (itL != ausgabe.end()) {
 			std::cout << std::endl << l << " Globalezeit = " << dGlobaleZeit
 					<< std::endl;
@@ -299,7 +304,7 @@ void vAufgabe_AB1() {
 				vecFahrzeuge[i]->dTanken();
 			}
 			if (itL != ausgabe.end()) {
-				std::cout << *vecFahrzeuge[i] << endl;
+				std::cout << *vecFahrzeuge[i] << std::endl;
 			}
 		}
 		l++;
@@ -372,7 +377,7 @@ void vAufgabeCustom() {
 	std::string w3Name = "L13";
 	std::string w4Name = "L31";
 	Weg w3(w3Name, 500, Tempolimit::Landstrasse, false);
-	Weg w4(w4Name, 500, Tempolimit::Landstrasse,false);
+	Weg w4(w4Name, 500, Tempolimit::Landstrasse, false);
 
 	coords[0] = 100;
 	coords[1] = 350;
@@ -388,8 +393,7 @@ void vAufgabeCustom() {
 	auto fA2 = std::make_unique<PKW>("AAudi", 190, 11, 75);
 	auto fB2 = std::make_unique<PKW>("VW", 180, 2, 75);
 
-
-	auto fA3= std::make_unique<Fahrrad>("Fahrrad", 50);
+	auto fA3 = std::make_unique<Fahrrad>("Fahrrad", 50);
 	w1.vAnnahme(std::move(fA3));           // fahrend FAHRRAD als erstes
 	w1.vAnnahme(std::move(fA1));           // fahrend
 	w1.vAnnahme(std::move(fA2), 1.25);      // parken mit Startzeit
@@ -523,24 +527,170 @@ void vAufgabe6a() {
 	std::cout << "=== Aufgabe 6a abgeschlossen ===" << std::endl;
 }
 
-void vMapTest()
-{
-    Simulation sim;
+void vAufgabe7() {
+	std::cout << "\n====        Aufgabe 7 (Kreuzungen / Verkehrsnetz)   ====\n";
 
-    auto A = std::make_shared<Kreuzung>("A", 100.0);
-    sim.vRegistriereKreuzung(A);
 
-    // Duplikat-Test
-    try {
-        sim.vRegistriereKreuzung(std::make_shared<Kreuzung>("A", 0.0));
-    } catch (const std::runtime_error& e) {
-        std::cout << "OK Duplikat abgefangen: " << e.what() << "\n";
-    }
+	bInitialisiereGrafik(1000, 700);
 
-    // Lookup-Test
-    try {
-        sim.pKreuzung("DOES_NOT_EXIST");
-    } catch (const std::runtime_error& e) {
-        std::cout << "OK Lookup abgefangen: " << e.what() << "\n";
-    }
+	// Koordinaten aus Figure 6.2
+	const int Kr1x = 680, Kr1y = 40;
+	const int Kr2x = 680, Kr2y = 300;
+	const int Kr3x = 680, Kr3y = 570;
+	const int Kr4x = 320, Kr4y = 300;
+
+	bZeichneKreuzung(Kr1x, Kr1y);
+	bZeichneKreuzung(Kr2x, Kr2y);
+	bZeichneKreuzung(Kr3x, Kr3y);
+	bZeichneKreuzung(Kr4x, Kr4y);
+
+	// -------------------------
+	// Kreuzungen
+	// -------------------------
+	auto Kr1 = std::make_shared<Kreuzung>("Kr1", 0.0);
+	auto Kr2 = std::make_shared<Kreuzung>("Kr2", 1000.0); // Tankstelle = 1000l
+	auto Kr3 = std::make_shared<Kreuzung>("Kr3", 0.0);
+	auto Kr4 = std::make_shared<Kreuzung>("Kr4", 0.0);
+
+	// -------------------------
+	// Grafik: Straßen zeichnen (pro Straße genau 1x!)
+	// bZeichneStrasse(NameHin, NameRueck, Laenge, AnzahlKoord, Koordinaten)
+	// Koordinaten: AnzahlKoord X/Y-Paare (also 2*AnzahlKoord ints)
+	// -------------------------
+
+	// Straße 1: Kr1 <-> Kr2 (gerade)
+	{
+	    int coords[] = { 680, 40,   680, 300 };
+	    bZeichneStrasse("W12", "W21", 40, 2, coords);
+	}
+
+	// Straße 3: Kr2 <-> Kr3 (gerade)
+	{
+	    int coords[] = { 680, 300,  680, 570 };
+	    bZeichneStrasse("W23b", "W32b", 40, 2, coords);
+	}
+
+	// Straße 4: Kr2 <-> Kr4 (gerade)
+	{
+	    int coords[] = { 680, 300,  320, 300 };
+	    bZeichneStrasse("W24", "W42", 55, 2, coords);
+	}
+
+	// Straße 2: Kr2 <-> Kr3 (rechter “Ring”, Polygonzug)
+	{
+	    int coords[] = {
+	        680, 300,
+	        850, 300,
+	        970, 390,
+	        970, 500,
+	        850, 570,
+	        680, 570
+	    };
+	    bZeichneStrasse("W23a", "W32a", 115, 6, coords);
+	}
+
+	// Straße 5: Kr4 <-> Kr3 (unterer Bogen, Polygonzug)
+	{
+	    int coords[] = {
+	        320, 300,
+	        320, 420,
+	        350, 510,
+	        500, 570,
+	        680, 570
+	    };
+	    bZeichneStrasse("W34", "W43", 85, 5, coords);
+	}
+
+	// Straße 6: Kr4 <-> Kr4 (linker Ring/Loop, Polygonzug; Ende wieder Kr4)
+	{
+	    int coords[] = {
+	        320, 300,
+	        170, 300,
+	        70,  250,
+	        80,  90,
+	        200, 60,
+	        320, 150,
+	        320, 300
+	    };
+	    bZeichneStrasse("W44a", "W44b", 130, 7, coords);
+	}
+
+	// -------------------------
+	// Straßen gemäß Figure 6.2
+	// 50 km/h -> Innerorts
+	// 100 km/h -> Landstrasse
+	// "-" -> Autobahn
+	// "schlecht" -> Überholverbot = true
+	// "gut" -> Überholverbot = false
+	// -------------------------
+	Kreuzung::vVerbinde("W12", "W21", 40.0, Kr1, Kr2, Tempolimit::Innerorts,
+			true);
+	Kreuzung::vVerbinde("W23a", "W32a", 115.0, Kr2, Kr3, Tempolimit::Autobahn,
+			false);
+	Kreuzung::vVerbinde("W23b", "W32b", 40.0, Kr2, Kr3, Tempolimit::Innerorts,
+			true);
+	Kreuzung::vVerbinde("W24", "W42", 55.0, Kr2, Kr4, Tempolimit::Innerorts,
+			true);
+	Kreuzung::vVerbinde("W34", "W43", 85.0, Kr4, Kr3, Tempolimit::Autobahn,
+			false);
+	Kreuzung::vVerbinde("W44a", "W44b", 130.0, Kr4, Kr4,
+			Tempolimit::Landstrasse, false);
+
+	// -------------------------
+	// Fahrzeuge über Kr1 annehmen
+	// (parkend auf den ersten abgehenden Weg, ggf. mit Startzeit)
+	// -------------------------
+	Kr1->vAnnahme(std::make_unique<PKW>("BMW", 120.0, 6.5, 55.0));     // sofort
+	Kr1->vAnnahme(std::make_unique<PKW>("Mercedes", 110.0, 7.2, 60.0), 1.0); // ab t=1
+	Kr1->vAnnahme(std::make_unique<Fahrrad>("Bike_1", 30.0));          // sofort
+	Kr1->vAnnahme(std::make_unique<PKW>("Audi", 140.0, 8.0, 65.0), 2.5); // ab t=2.5
+
+	// -------------------------
+	// Simulation
+	// -------------------------
+	const int maxI = 80;
+	const double dt = 0.3;
+
+	std::cout << "Simulationsbeginn...\n";
+	for (int i = 0; i < maxI; ++i) {
+		dGlobaleZeit += dt;
+		vSetzeZeit(dGlobaleZeit);
+
+		std::cout << "\nZeit: " << dGlobaleZeit << " (" << (i + 1) << "/"
+				<< maxI << ")\n";
+
+		// Jede Kreuzung simuliert alle abgehenden Wege
+		Kr1->vSimulieren();
+		Kr2->vSimulieren();
+		Kr3->vSimulieren();
+		Kr4->vSimulieren();
+
+		vSleep(FRAME_SLEEP);
+	}
+
+	vBeendeGrafik();
+	std::cout << "=== Aufgabe 7 abgeschlossen ===\n";
+
+}
+
+// FIXME ??? didn't really test this
+void vMapTest() {
+	Simulation sim;
+
+	auto A = std::make_shared<Kreuzung>("A", 100.0);
+	sim.vRegistriereKreuzung(A);
+
+	// Duplikat-Test
+	try {
+		sim.vRegistriereKreuzung(std::make_shared<Kreuzung>("A", 0.0));
+	} catch (const std::runtime_error &e) {
+		std::cout << "OK Duplikat abgefangen: " << e.what() << "\n";
+	}
+
+	// Lookup-Test
+	try {
+		sim.pKreuzung("DOES_NOT_EXIST");
+	} catch (const std::runtime_error &e) {
+		std::cout << "OK Lookup abgefangen: " << e.what() << "\n";
+	}
 }

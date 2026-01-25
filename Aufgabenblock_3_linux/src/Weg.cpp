@@ -53,21 +53,7 @@ void Weg::vKopf() {
 
 void Weg::vAusgeben(std::ostream &os) const {
 	SimulationsObjekt::vAusgeben(os);
-
-	os << std::left << std::setw(10) << dLaenge() << " (";
-
-	bool first = true;
-	for (const std::unique_ptr<Fahrzeug> &fzg : p_pFahrzeuge) {
-		if (!first) {
-			os << " ";
-		} else {
-			first = false;
-		}
-
-		os << fzg->getName();
-	}
-
-	os << ")";
+  // FIXME  Weg::vAusgeben
 }
 
 void Weg::vSimulieren() {

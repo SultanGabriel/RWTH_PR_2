@@ -67,6 +67,18 @@ public:
     // Setter für Rueckweg (nicht const möglich!)
     void vSetRueckweg(std::shared_ptr<Weg> rueck) { p_pRueckweg = rueck; }
 
+	 void vEinlesen(std::istream& in, bool bMitGrafik) override {
+	        SimulationsObjekt::vEinlesen(in, bMitGrafik);
+//	        in >> p_dTankstelle;
+//
+//	        if(in.fail()){
+//	            throw std::runtime_error("Kreuzung::vEinlesen: missing/invalid token");
+//	        }
+//	        if (p_dTankstelle < 0 ){
+//	        	throw std::runtime_error("p_dTankstelle < 0");
+    // FIXME WIP CHECK
+//	        }
+	    }
 };
 
 #endif /* SRC_WEG_H_ */

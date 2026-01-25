@@ -12,6 +12,8 @@
 #include "Aufgaben.h"
 #include "Utils.h"
 
+double dGlobaleZeit = 0.0;
+int FRAME_SLEEP = 100;
 
 int main() {
 	std::cout << "====== The application is initializing ======" << std::endl;
@@ -26,8 +28,10 @@ int main() {
 //	vAufgabe_AB1();
 //	vAufgabe4();
 //	vAufgabe5();
-	vAufgabeCustom();
+//	vAufgabe6();
 //	vAufgabe6a();
+//	vAufgabeCustom();
+	vAufgabe7(); // FIXME broken
 
 	std::cout << "====== The application is shutting down ======" << std::endl;
 	std::cout << "====== Developer: Gabriel Sultan        ======" << std::endl;

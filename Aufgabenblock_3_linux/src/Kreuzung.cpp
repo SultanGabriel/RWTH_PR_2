@@ -13,6 +13,12 @@
 #include <iostream>
 #include <random>
 #include <vector>
+
+Kreuzung::Kreuzung() :
+		SimulationsObjekt(""), p_dTankstelle(0) {
+	// TODO Auto-generated constructor stub
+
+}
 Kreuzung::Kreuzung(std::string name, double tankstelle) :
 		SimulationsObjekt(name), p_dTankstelle(tankstelle) {
 	// TODO Auto-generated constructor stub
@@ -64,6 +70,10 @@ void Kreuzung::vTanken(Fahrzeug& fzg)
     p_dTankstelle -= getankt;
 }
 
+void Kreuzung::vAusgeben(std::ostream &os) const {
+	SimulationsObjekt::vAusgeben(os);
+  // TODO Kreuzung::vAusgeben
+}
 void Kreuzung::vAnnahme(std::unique_ptr<Fahrzeug> fzg, double startzeit)
 {
     if (!fzg) return;

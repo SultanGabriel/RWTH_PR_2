@@ -15,7 +15,7 @@
 #include "Weg.h"
 #include "Verhalten.h"
 
-//#include "ausnahmen/LiegenGebliebenFahrausnahme.h"
+#include "ausnahmen/LiegenGebliebenFahrausnahme.h"
 
 PKW::PKW(const std::string &name, double vmax, double verbrauch, double tankvol) :
 				Fahrzeug(name, vmax),

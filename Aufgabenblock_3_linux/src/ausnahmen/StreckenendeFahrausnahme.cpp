@@ -8,6 +8,7 @@
 #include "StreckenendeFahrausnahme.h"
 #include "../Fahrzeug.h"
 #include "../Weg.h"
+#include "../Kreuzung.h"
 
 void StreckenendeFahrausnahme::vBearbeiten() {
 	std::cout << "[AUSNAHME] [Streckenende] " << p_rFahrzeug.getName()
@@ -15,4 +16,5 @@ void StreckenendeFahrausnahme::vBearbeiten() {
 
 	// Fzg entfehrnen
 	p_rWeg.pAbgabe(p_rFahrzeug);
+  // FIXME new Strecke xd
 }

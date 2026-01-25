@@ -13,12 +13,15 @@
 #include <iomanip>
 #include <memory>
 #include <limits>
+#include <stdexcept>
 
 #include "lib/SimuClient.h"
+#include "Utils.h"
 
 #include "SimulationsObjekt.h"
 
-enum class VerhaltenTyp;
+enum class VerhaltenTyp
+;
 class Verhalten;
 class FahrenVerhalten;
 class ParkenVerhalten;
@@ -29,7 +32,7 @@ extern double dGlobaleZeit;
 
 class Fahrzeug: public SimulationsObjekt {
 protected:
-	const double p_dMaxGeschwindigkeit;     // maximale Geschwindigkeit
+	double p_dMaxGeschwindigkeit;     // maximale Geschwindigkeit
 	double p_dGesamtStrecke;
 	double p_dGesamtZeit;
 	std::unique_ptr<Verhalten> p_pVerhalten;
@@ -55,8 +58,9 @@ public:
 	virtual void vAusgeben(std::ostream &os) const override;
 
 	virtual void vSimulieren();
-	virtual void vZeichnen(const Weg& weg) const { // To be overwritten...
-		};
+	virtual void vZeichnen(const Weg &weg) const { // To be overwritten...
+	}
+	;
 
 	// Geschwindigkeit wird von Fahrrad überschrieben
 	virtual double dGeschwindigkeit() const {
@@ -71,10 +75,10 @@ public:
 	virtual double dTanken(double dMenge =
 			std::numeric_limits<double>::infinity());
 
-	VerhaltenTyp tVerhaltenTyp ();
+	VerhaltenTyp tVerhaltenTyp();
 
-	void vNeueStrecke(Weg* weg);
-	void vNeueStrecke(Weg* weg, double startzeit);
+	void vNeueStrecke(Weg *weg);
+	void vNeueStrecke(Weg *weg, double startzeit);
 
 	// ---       Operatoren       ---
 	// Operator "<"
@@ -83,6 +87,19 @@ public:
 	// Operator "="
 	Fahrzeug& operator=(const Fahrzeug &other);
 
+	virtual void vEinlesen(std::istream &in, bool bMitGrafik = false) {
+		SimulationsObjekt::vEinlesen(in, bMitGrafik);
+
+		double dMaxGeschwindigkeitdMaxGes;
+		in >> dMaxGeschwindigkeitdMaxGes;
+		p_dMaxGeschwindigkeit = dMaxGeschwindigkeitdMaxGes;
+
+		if (lessOrEqual(p_dMaxGeschwindigkeit, 0)) {
+			throw std::runtime_error(
+					"Fahrzeug::vEinlesen: p_dMaxGeschwindigkeit <= 0");
+		}
+	}
+  // FIXME WIP CHECK
 };
 
 #endif

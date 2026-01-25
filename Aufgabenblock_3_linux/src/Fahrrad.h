@@ -28,8 +28,32 @@ public:
 	void vAusgeben(std::ostream &os = std::cout) const override;
 	static void vKopf();
 
-	void vZeichnen(const Weg& weg) const override;
+	void vZeichnen(const Weg &weg) const override;
 
+	void vEinlesen(std::istream &in, bool bMitGrafik) override {
+		Fahrzeug::vEinlesen(in);
+		// keine extra Werte laut Aufgabenstellung
+		std::string startKreuzungName;
+		double startZeitpunkt;
+
+		in >> startKreuzungName;
+		in >> startZeitpunkt;
+
+		if (in.fail()) {
+			throw std::runtime_error(
+					"Fahrrad::vEinlesen: missing/invalid token");
+		}
+
+		if (startKreuzungName.empty()) {
+			throw std::runtime_error(
+					"Fahrrad::vEinlesen: startKreuzungName empty");
+		}
+
+		if (startZeitpunkt < 0) {
+			throw std::runtime_error("Fahrrad::vEinlesen: startZeitpunkt < 0");
+		}
+// FIXME WIP CHECK
+	}
 };
 
 #endif /* FAHRRAD_H_ */

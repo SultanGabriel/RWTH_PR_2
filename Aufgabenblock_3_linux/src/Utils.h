@@ -48,4 +48,9 @@ bool lessOrEqual(double a, double b, double epsilon = EPSILON);
 // VListe
 void printVList(const vertagt::VListe<int> &liste);
 
+
+std::vector<std::string> split(std::string s,
+		std::string delim = " ");
+std::string getFirstToken(std::string s,
+		std::string delim = " ");
 #endif /* UTILS_H_ */

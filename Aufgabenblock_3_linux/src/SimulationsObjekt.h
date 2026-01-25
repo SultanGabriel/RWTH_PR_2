@@ -16,9 +16,8 @@ class SimulationsObjekt {
 protected:
 	std::string p_sName;
 	const int p_iID;
-	double p_dZeit;
-
-	static int p_iMaxID; // letzte Simulationszeit
+	double p_dZeit; // letzte Simulationszeit
+	static int p_iMaxID;
 
 public:
 	SimulationsObjekt(std::string name);
@@ -31,12 +30,20 @@ public:
 	bool operator==(const SimulationsObjekt &other) const {
 		return p_iID == other.p_iID;
 	}
+
+	virtual void vEinlesen(std::istream &in, bool bMitGrafik = false);
 	// Getters
 	std::string getName() const;
 	int getID() const;
 
 	// Setter
 	void setName(const std::string &name);
+
+	friend std::istream& operator>>(std::istream &in, SimulationsObjekt &obj) {
+    // FIXME WIP CHECK????
+		obj.vEinlesen(in);
+		return in;
+	}
 };
 
 std::ostream& operator<<(std::ostream &os, const SimulationsObjekt &obj);

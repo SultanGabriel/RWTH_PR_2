@@ -7,6 +7,8 @@
 
 #include "SimulationsObjekt.h"
 
+#include <stdexcept>
+
 int SimulationsObjekt::p_iMaxID = 0;
 
 SimulationsObjekt::SimulationsObjekt(std::string name) :
@@ -43,4 +45,19 @@ void SimulationsObjekt::vAusgeben(std::ostream &os) const {
 
 void SimulationsObjekt::vKopf() {
 	std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "Name";
+}
+
+void SimulationsObjekt::vEinlesen(std::istream& in, bool bMitGrafik) {
+    if (!p_sName.empty()) {
+        throw std::runtime_error("Simulationsobjekt::vEinlesen: object already initialized");
+    }
+
+    in >> p_sName;
+    if (!in) {
+        throw std::runtime_error("SimulationsObjekt::vEinlesen: failed to read name");
+    }
+    if (p_sName.empty()) {
+        throw std::runtime_error("SimulationsObjekt::vEinlesen: empty name");
+    }
+  // FIXME WIP CHECK
 }
