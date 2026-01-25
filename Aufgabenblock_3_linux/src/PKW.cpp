@@ -42,7 +42,7 @@ void PKW::vSimulieren() {
 	Fahrzeug::vSimulieren();
 
 
-	// Spritt Verbrauch
+	// Spritt Verbrauch (OLD IMPLEMENTATION)
 	double deltaS = p_dAbschnittStrecke - dOldAbschnitt;
 	if (deltaS > 0.0) {
 		double dVerbraucht = deltaS * (p_dVerbrauch / 100.0);
@@ -50,7 +50,8 @@ void PKW::vSimulieren() {
 		if (lessOrEqual(p_dTankinhalt, 0.0)) {
 
 			p_dTankinhalt = 0.0;
-			throw LiegenGebliebenFahrausnahme(*this, *p_pVerhalten->getWeg());
+//			throw LiegenGebliebenFahrausnahme(*this, *p_pVerhalten->getWeg());
+			vWechsleZuParken(p_pVerhalten->getWeg(), 0);
 		}
 //			throw FIXME ?
 	}

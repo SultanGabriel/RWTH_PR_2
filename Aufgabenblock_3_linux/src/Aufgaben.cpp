@@ -356,7 +356,7 @@ void vAufgabe5() {
 	std::cout << "=== Aufgabe 5 abgeschlossen ===" << std::endl;
 }
 
-void vAufgabeCustom() {
+void vAufgabe_6_Custom() {
 	std::cout << std::endl << "====        Aufgabe CUSTOM   ====" << std::endl;
 
 	dGlobaleZeit = 0.0;
@@ -403,7 +403,7 @@ void vAufgabeCustom() {
 
 	int ANZAHL_FAHRZEUGE_L13 = 4;
 	for (int i = 0; i < ANZAHL_FAHRZEUGE_L13; i++) {
-		auto f = std::make_unique<PKW>("PKW_" + i, 120, 7, 32);
+		auto f = std::make_unique<PKW>("PKW_" + std::to_string(i), 120, 7, 32);
 
 		if (ANZAHL_FAHRZEUGE_L13 * 0.5 < i) {
 			auto fA = std::make_unique<Fahrrad>("Bicicleta", 50);
@@ -440,7 +440,7 @@ void vAufgabeCustom() {
 		Weg::vKopf();
 		std::cout << w1 << std::endl;
 		std::cout << w2 << std::endl;
-		std::cout << w4 << std::endl;
+		std::cout << w3 << std::endl;
 		std::cout << w4 << std::endl;
 		// Update Fahrzeuge
 		for (auto &fzg : w1.getFahrzeuge()) {
@@ -473,6 +473,8 @@ void vAufgabeCustom() {
 	vBeendeGrafik();
 	std::cout << "=== Aufgabe 6 abgeschlossen ===" << std::endl;
 }
+
+
 
 void vAufgabe6a() {
 	std::cout << std::endl << "====        Aufgabe 6a       ====" << std::endl;

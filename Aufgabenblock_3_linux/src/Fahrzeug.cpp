@@ -73,12 +73,9 @@ void Fahrzeug::vKopfDef() {
 }
 
 void Fahrzeug::vKopf() {
-	std::cout << std::left
-			<< std::setw(5) << "ID"
-			<< std::setw(20) << "Name"
-			<< std::setw(20) << "MaxGeschwindigkeit"
-			<< std::setw(15) << "Gesamtstrecke"
-			<< std::setw(15) << "Abschnittstrecke";
+	std::cout << std::left << std::setw(5) << "ID" << std::setw(20) << "Name"
+			<< std::setw(20) << "MaxGeschwindigkeit" << std::setw(15)
+			<< "Gesamtstrecke" << std::setw(15) << "Abschnittstrecke";
 //	std::cout << std::left
 //			  << std::setw(5)  << "ID"
 //			  << std::setw(20) << "Name"
@@ -91,7 +88,7 @@ void Fahrzeug::vAusgeben(std::ostream &os) const {
 
 	os << std::left << std::setw(20) << std::fixed << std::setprecision(2)
 			<< p_dMaxGeschwindigkeit << std::setw(15) << p_dGesamtStrecke
-			 << std::setw(15) << p_dAbschnittStrecke;
+			<< std::setw(15) << p_dAbschnittStrecke;
 }
 
 void Fahrzeug::vSimulieren() {
@@ -104,14 +101,24 @@ void Fahrzeug::vSimulieren() {
 		std::cout << "[WARN] Shit p_pVerhalten == nullptr" << std::endl;
 		return;
 	}
+//
+//	double dt = dGlobaleZeit - p_dZeit;
+//	p_dZeit = dGlobaleZeit;
+//	p_dGesamtZeit += dt;
+//
+//	double strecke = p_pVerhalten->dStrecke(*this, dt);
+//	p_dGesamtStrecke += strecke;
+//	p_dAbschnittStrecke += strecke;
 
-	double dt = dGlobaleZeit - p_dZeit;
+	const double dt = dGlobaleZeit - p_dZeit;
+
+	const double s = p_pVerhalten->dStrecke(*this, dt); // kann werfen
+
 	p_dZeit = dGlobaleZeit;
 	p_dGesamtZeit += dt;
+	p_dGesamtStrecke += s;
+	p_dAbschnittStrecke += s;
 
-	double strecke = p_pVerhalten->dStrecke(*this, dt);
-	p_dGesamtStrecke += strecke;
-	p_dAbschnittStrecke += strecke;
 }
 
 double Fahrzeug::dTanken(double dMenge) {
@@ -124,11 +131,17 @@ void Fahrzeug::vNeueStrecke(Weg *weg) {
 
 }
 
-void Fahrzeug::vNeueStrecke(Weg* weg, double startzeit) {
-    p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
-    p_dAbschnittStrecke = 0;
+void Fahrzeug::vNeueStrecke(Weg *weg, double startzeit) {
+	p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
+	p_dAbschnittStrecke = 0;
 }
 
-VerhaltenTyp Fahrzeug::tVerhaltenTyp(){
+VerhaltenTyp Fahrzeug::tVerhaltenTyp() {
 	return p_pVerhalten->tVerhaltenTyp();
 }
+void Fahrzeug::vWechsleZuParken(Weg *weg, double startzeit) {
+	p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
+	// bewusst KEIN Reset von p_dAbschnittStrecke
+
+}
+

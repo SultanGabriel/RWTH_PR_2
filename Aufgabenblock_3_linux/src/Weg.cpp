@@ -14,7 +14,6 @@
 #include "Verhalten.h"
 #include "Kreuzung.h"
 
-//enum class VerhaltenTyp;
 
 Weg::Weg() :
 				SimulationsObjekt::SimulationsObjekt(""),
@@ -31,13 +30,9 @@ Weg::Weg(std::string name, double laenge, Tempolimit limit, bool ueberholverbot,
 					p_dLaenge(laenge),
 					p_dVirtuelleSchranke(laenge),
 					p_bUeberholVerbot(ueberholverbot),
-					p_eTempolimit(limit),
-					p_pZielKreuzung(ziel) {
+					p_pZielKreuzung(ziel),
+					p_eTempolimit(limit) {
 	// Leer
-//	 if (ziel)
-//	    {
-//	        p_pZielKreuzung = ziel; // weak_ptr bekommt shared_ptr zugewiesen
-//	    }
 }
 
 Weg::~Weg() {
@@ -53,29 +48,35 @@ void Weg::vKopf() {
 
 void Weg::vAusgeben(std::ostream &os) const {
 	SimulationsObjekt::vAusgeben(os);
-  // FIXME  Weg::vAusgeben
-}
+
+	os << std::left << std::setw(10) << p_dLaenge << " (";
+
+	bool first = true;
+	for (const std::unique_ptr<Fahrzeug> &fzg : p_pFahrzeuge) {
+		if (!first) {
+			os << " ";
+		} else {
+			first = false;
+		}
+
+		os << fzg->getName();
+	}
+
+	os << ")";}
 
 void Weg::vSimulieren() {
     p_dVirtuelleSchranke = p_dLaenge;
 
 	for (auto it = p_pFahrzeuge.begin(); it != p_pFahrzeuge.end(); ++it) {
-//	for (auto it = p_pFahrzeuge.end(); it != p_pFahrzeuge.begin(); ) {
-//--it;
 		try {
 
 			auto &fzg = *it;
 			fzg->vSimulieren();
 
-//			double streckeGefahren = fzg->dAbschnittStrecke();
-
-			//if (!p_bGestartet && greaterOrEqual(dGlobaleZeit, p_dStartzeit)) {
 			if (p_bUeberholVerbot
 					&& fzg->tVerhaltenTyp() == VerhaltenTyp::FAHREN_VERHALTEN) {
-				p_dVirtuelleSchranke = fzg->dAbschnittStrecke() - 10; // FIXME make adjustable
-				std::cout << "Uberholverbot fml " << fzg->getName() << " "
-						<< " " << p_dVirtuelleSchranke
-						<< std::endl;
+				p_dVirtuelleSchranke = fzg->dAbschnittStrecke();
+
 			}
 
 		} catch (Fahrausnahme &exception) {
@@ -85,6 +86,14 @@ void Weg::vSimulieren() {
 
 	// Aktualisieren
 	p_pFahrzeuge.vAktualisieren();
+//FIXME DEBUG				std::cout << "\nWeg " << getName() << "\n";
+//				for (auto it = p_pFahrzeuge.begin(); it != p_pFahrzeuge.end(); ++it) {
+//				    auto& f = **it;
+//				    std::cout << "  " << f.getName()
+//				              << "  s=" << f.dAbschnittStrecke()
+//				              << "  typ=" << static_cast<int>(f.tVerhaltenTyp())
+//				              << "\n";
+//				}
 }
 
 double Weg::dTempolimit() const {
@@ -97,7 +106,7 @@ double Weg::dTempolimit() const {
 
 		case Tempolimit::Autobahn:
 		default:
-			return std::numeric_limits<int>::max();
+			return std::numeric_limits<int>::infinity();
 	}
 }
 
@@ -146,5 +155,4 @@ std::unique_ptr<Fahrzeug> Weg::pAbgabe(const Fahrzeug &f) {
 double Weg::dVirtuelleSchranke() const {
 	// Wenn Uberholverbot gilt, dann die virtuelle schranke, sonst
 	return p_bUeberholVerbot ? p_dVirtuelleSchranke : p_dLaenge;
-//	return p_dVirtuelleSchranke;
 }

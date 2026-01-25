@@ -49,7 +49,7 @@ void Kreuzung::vVerbinde(
     rueck->vSetRueckweg(hin);
 
     // in die jeweiligen Kreuzungen eintragen: "von hier wegführende Wege"
-    start->p_pWege.push_back(hin);
+    start->p_pWege.push_back(hin); // FIXME private members, fix maybe...
     ziel->p_pWege.push_back(rueck);
 }
 void Kreuzung::vTanken(Fahrzeug& fzg)
@@ -64,10 +64,13 @@ void Kreuzung::vTanken(Fahrzeug& fzg)
     const double soll = pkw->dTankvolumen() - pkw->getTankinhalt();
     if (soll <= 0.0) return;
 
-    // "Reserve": wir tanken immer voll, auch wenn Tankstelle eigentlich knapp wird
-    // => einfach p_dTankstelle reduzieren, auch wenn negativ
-    const double getankt = pkw->dTanken(soll);
+    const double verfuegbar = std::max(0.0, p_dTankstelle);
+    const double menge = (verfuegbar > 0.0) ? std::min(soll, verfuegbar) : soll;
+    // wenn 0, dann "Reserve": trotzdem voll
+
+    const double getankt = pkw->dTanken(menge);
     p_dTankstelle -= getankt;
+
 }
 
 void Kreuzung::vAusgeben(std::ostream &os) const {
@@ -81,12 +84,10 @@ void Kreuzung::vAnnahme(std::unique_ptr<Fahrzeug> fzg, double startzeit)
     // ggf. tanken
     vTanken(*fzg);
 
-    if (p_pWege.empty())
-    {
-        // keine Wege -> Fahrzeug kann nirgendwo hin
-        // Für die Aufgabe: einfach "fallen lassen"
-        return;
+    if (p_pWege.empty()) {
+        throw std::runtime_error("Kreuzung::vAnnahme: keine abgehenden Wege");
     }
+
 
     // erster abgehender Weg
     auto ersterWeg = p_pWege.front();

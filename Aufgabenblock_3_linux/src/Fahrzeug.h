@@ -57,10 +57,13 @@ public:
 
 	virtual void vAusgeben(std::ostream &os) const override;
 
+	virtual bool kannLosfahren() const {
+		return true;
+	}
+
 	virtual void vSimulieren();
 	virtual void vZeichnen(const Weg &weg) const { // To be overwritten...
 	}
-	;
 
 	// Geschwindigkeit wird von Fahrrad überschrieben
 	virtual double dGeschwindigkeit() const {
@@ -70,6 +73,7 @@ public:
 	virtual double dAbschnittStrecke() const {
 		return p_dAbschnittStrecke;
 	}
+
 
 	// Tankfunktion
 	virtual double dTanken(double dMenge =
@@ -98,8 +102,11 @@ public:
 			throw std::runtime_error(
 					"Fahrzeug::vEinlesen: p_dMaxGeschwindigkeit <= 0");
 		}
-	}
   // FIXME WIP CHECK
+	}
+
+	void vWechsleZuParken(Weg* weg, double startzeit);
+
 };
 
 #endif

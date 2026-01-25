@@ -30,8 +30,8 @@ int main() {
 //	vAufgabe5();
 //	vAufgabe6();
 //	vAufgabe6a();
-//	vAufgabeCustom();
-	vAufgabe7(); // FIXME broken
+	vAufgabe_6_Custom();
+//	vAufgabe7(); // FIXME broken
 
 	std::cout << "====== The application is shutting down ======" << std::endl;
 	std::cout << "====== Developer: Gabriel Sultan        ======" << std::endl;

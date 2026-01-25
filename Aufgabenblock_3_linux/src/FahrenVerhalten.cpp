@@ -19,46 +19,40 @@ FahrenVerhalten::~FahrenVerhalten() {
 	// TODO Auto-generated destructor stub
 }
 
-double FahrenVerhalten::dStrecke(Fahrzeug &fzg, double dt) {
-//	Weg* weg = getWeg();
-//	double dGeschw = std::min(fzg.dGeschwindigkeit(), weg->dTempolimit());
-//	double dEffStrecke = dGeschw * dt;
-////	double dRestStrecke = getWeg()->dLaenge() - fzg.dAbschnittStrecke();
-//	double dRestStrecke = getWeg()->dVirtuelleSchranke() - fzg.dAbschnittStrecke();
-////	double dRestBisSchranke = getWeg()->dLaenge() - weg->dVirtuelleSchranke();
-//	// if (p_pWeg->bUberholverbot)
+//double FahrenVerhalten::dStrecke(Fahrzeug &fzg, double dt) {
 //
-//	//dRestStrecke = std::min(weg->dVirtuelleSchranke(), dRestStrecke);
-////	double dSchranke = weg->dVirtuelleSchranke();
-////	if (lessOrEqual(dSchranke,dRestStrecke)) {
-////		std::cout << "FML\n";
-////		return getWeg()->dLaenge()-dSchranke;
-////	}
-////	kkif(dRestBisSchranke, )){
-////		return std::min(dRestBisSchranke, dEffStrecke);
-////	}
+//	Weg *weg = getWeg();
 //
-//	if (lessOrEqual(dRestStrecke, 0)) {
-//		throw StreckenendeFahrausnahme(fzg, *weg);
+//	double v = std::min(fzg.dGeschwindigkeit(), weg->dTempolimit());
+//	double dEff = v * dt;
+//
+//	// Statt weg->dLaenge() jetzt weg->dSchranke()
+//	double dRest = weg->dVirtuelleSchranke() - fzg.dAbschnittStrecke();
+//	if ((!weg->bUeberholVerbot())
+//			&& fzg.tVerhaltenTyp() == VerhaltenTyp::FAHREN_VERHALTEN) {
+//		dRest = weg->dLaenge() - fzg.dAbschnittStrecke();
+//
 //	}
 //
-//
-//
-//	return std::min(dEffStrecke, dRestStrecke);
+//	if (lessOrEqual(dRest, 0.0)) {
+//		throw StreckenendeFahrausnahme(fzg, *weg);
+//	}
+//	return std::min(dEff, dRest);
+//}
+double FahrenVerhalten::dStrecke(Fahrzeug &fzg, double dt) {
     Weg* weg = getWeg();
 
     double v = std::min(fzg.dGeschwindigkeit(), weg->dTempolimit());
     double dEff = v * dt;
 
-    // Statt weg->dLaenge() jetzt weg->dSchranke()
-    double dRest = weg->dVirtuelleSchranke() - fzg.dAbschnittStrecke();
-	if (fzg.tVerhaltenTyp() == VerhaltenTyp::FAHREN_VERHALTEN){
-		dRest = weg->dLaenge() - fzg.dAbschnittStrecke();
-
-	}
-
-    if (lessOrEqual(dRest, 0.0)) {
+    const double dRestEnde = weg->dLaenge() - fzg.dAbschnittStrecke();
+    if (lessOrEqual(dRestEnde, 0.0)) {
         throw StreckenendeFahrausnahme(fzg, *weg);
     }
-    return std::min(dEff, dRest);
+
+    const double dRestSchranke = weg->dVirtuelleSchranke() - fzg.dAbschnittStrecke();
+    const double dZulaessig = std::min(dRestEnde, std::max(0.0, dRestSchranke));
+
+    return std::min(dEff, dZulaessig);
 }
+

@@ -19,11 +19,13 @@ ParkenVerhalten::~ParkenVerhalten() {
 }
 
 double ParkenVerhalten::dStrecke(Fahrzeug &fzg, double dt) {
-//    if (dGlobaleZeit < p_dStartzeit) {
-//        return 0.0;
-//    }
+    if (dGlobaleZeit < p_dStartzeit) {
+        return 0.0;
+    }
 
-	if (!p_bGestartet && greaterOrEqual(dGlobaleZeit, p_dStartzeit)) {
+
+
+	if (fzg.kannLosfahren() && !p_bGestartet && greaterOrEqual(dGlobaleZeit, p_dStartzeit)) {
 		p_bGestartet = true;
 
 		throw LosfahrenFahrausnahme(fzg, *getWeg());

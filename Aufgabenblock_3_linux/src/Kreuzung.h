@@ -12,11 +12,11 @@
 #include <memory>
 
 #include "SimulationsObjekt.h"
+#include "Tempolimit.h"
 
 class PKW;
 class Weg;
 class Fahrzeug;
-enum class Tempolimit;
 
 class Kreuzung: public SimulationsObjekt {
 private:
@@ -41,6 +41,7 @@ public:
 	void vAusgeben(std::ostream &os) const override;
 
 	std::shared_ptr<Weg> pZufaelligerWeg(Weg &ankommenderWeg);
+	const std::list<std::shared_ptr<Weg>>& getWege() const { return p_pWege; }
 
 	void vEinlesen(std::istream &in, bool bMitGrafik) override {
 		SimulationsObjekt::vEinlesen(in, bMitGrafik);

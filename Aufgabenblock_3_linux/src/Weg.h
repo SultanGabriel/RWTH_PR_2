@@ -59,6 +59,9 @@ public:
 	double dTempolimit() const;
 	double dLaenge() const;
 	double dVirtuelleSchranke() const;
+	bool bUeberholVerbot() const {
+		return p_bUeberholVerbot;
+	}
 	const vertagt::VListe<std::unique_ptr<Fahrzeug>>& getFahrzeuge() const;
     // Getter gefordert: shared_ptr via lock()
     std::shared_ptr<Kreuzung> pZielKreuzung() const ;

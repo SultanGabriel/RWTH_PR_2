@@ -36,7 +36,7 @@ void vAufgabe2();
 void vAufgabe3();
 void vAufgabe4();
 void vAufgabe5();
-void vAufgabeCustom();
+void vAufgabe_6_Custom();
 void vAufgabe6();
 void vAufgabe6a();
 void vAufgabe7();

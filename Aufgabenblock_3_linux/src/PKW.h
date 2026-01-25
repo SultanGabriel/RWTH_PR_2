@@ -69,6 +69,10 @@ public:
 		}
 	}
   // FIXME WIP CHECK
+
+	virtual bool kannLosfahren() const override {
+		return p_dTankinhalt > 0;
+	}
 };
 
 #endif /* PKW_H_ */
