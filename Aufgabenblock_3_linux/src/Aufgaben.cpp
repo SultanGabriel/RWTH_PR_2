@@ -642,10 +642,10 @@ void vAufgabe7() {
 	// Fahrzeuge über Kr1 annehmen
 	// (parkend auf den ersten abgehenden Weg, ggf. mit Startzeit)
 	// -------------------------
-	Kr1->vAnnahme(std::make_unique<PKW>("BMW", 120.0, 6.5, 55.0));     // sofort
-	Kr1->vAnnahme(std::make_unique<PKW>("Mercedes", 110.0, 7.2, 60.0), 1.0); // ab t=1
-	Kr1->vAnnahme(std::make_unique<Fahrrad>("Bike_1", 30.0));          // sofort
-	Kr1->vAnnahme(std::make_unique<PKW>("Audi", 140.0, 8.0, 65.0), 2.5); // ab t=2.5
+	Kr1->vAnnahme(std::make_unique<PKW>("BMW", 50.0, 6.5, 55.0));     // sofort
+	Kr1->vAnnahme(std::make_unique<PKW>("Mercedes", 50.0, 7.2, 60.0), 1.0); // ab t=1
+	Kr1->vAnnahme(std::make_unique<Fahrrad>("Bike_1", 12.0));          // sofort
+	Kr1->vAnnahme(std::make_unique<PKW>("Audi", 50.0, 8.0, 65.0), 2.5); // ab t=2.5
 
 	// -------------------------
 	// Simulation

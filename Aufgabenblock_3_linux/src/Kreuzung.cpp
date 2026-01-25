@@ -38,39 +38,35 @@ void Kreuzung::vVerbinde(
     Tempolimit limit,
     bool ueberholverbot)
 {
-    // Hinweg: start -> ziel
-    auto hin = std::make_shared<Weg>(nameHin, laenge, limit, ueberholverbot, ziel);
+    if (!start || !ziel) throw std::runtime_error("vVerbinde: start/zie l nullptr");
 
-    // Rückweg: ziel -> start
-    auto rueck = std::make_shared<Weg>(nameRueck, laenge, limit, ueberholverbot, start);
+    auto hin  = std::make_shared<Weg>(nameHin,  laenge, limit, ueberholverbot, ziel);
+    auto rueck= std::make_shared<Weg>(nameRueck,laenge, limit, ueberholverbot, start);
 
-    // gegenseitig als Rückweg bekannt machen
     hin->vSetRueckweg(rueck);
     rueck->vSetRueckweg(hin);
 
-    // in die jeweiligen Kreuzungen eintragen: "von hier wegführende Wege"
-    start->p_pWege.push_back(hin); // FIXME private members, fix maybe...
+    start->p_pWege.push_back(hin);
     ziel->p_pWege.push_back(rueck);
+
+    // FIXME (optional aber praktisch) Grafik: eine Straße zeichnen
+    // bZeichneStrasse(start->getName(), ziel->getName(), laenge, 2, coords);
 }
-void Kreuzung::vTanken(Fahrzeug& fzg)
-{
-    // Nur PKW tanken
-    PKW* pkw = dynamic_cast<PKW*>(&fzg);
+void Kreuzung::vTanken(Fahrzeug& fzg) {
+    auto* pkw = dynamic_cast<PKW*>(&fzg);
     if (!pkw) return;
 
-    if (p_dTankstelle <= 0.0) return;
-
-    // benötigte Menge um voll zu werden
-    const double soll = pkw->dTankvolumen() - pkw->getTankinhalt();
+    double soll = pkw->dTankvolumen() - pkw->getTankinhalt();
     if (soll <= 0.0) return;
 
-    const double verfuegbar = std::max(0.0, p_dTankstelle);
-    const double menge = (verfuegbar > 0.0) ? std::min(soll, verfuegbar) : soll;
-    // wenn 0, dann "Reserve": trotzdem voll
-
-    const double getankt = pkw->dTanken(menge);
-    p_dTankstelle -= getankt;
-
+    if (p_dTankstelle > 0.0) {
+        double menge = std::min(soll, p_dTankstelle);
+        double getankt = pkw->dTanken(menge);
+        p_dTankstelle -= getankt;
+    } else {
+        // Reserve: auch der letzte PKW wird voll
+        pkw->dTanken(soll);
+    }
 }
 
 void Kreuzung::vAusgeben(std::ostream &os) const {
@@ -79,53 +75,48 @@ void Kreuzung::vAusgeben(std::ostream &os) const {
 }
 void Kreuzung::vAnnahme(std::unique_ptr<Fahrzeug> fzg, double startzeit)
 {
-    if (!fzg) return;
+    if (!fzg) throw std::runtime_error("Kreuzung::vAnnahme: fzg nullptr");
+    if (p_pWege.empty()) throw std::runtime_error("Kreuzung::vAnnahme: keine abgehenden Wege bei " + getName());
 
     // ggf. tanken
     vTanken(*fzg);
 
-    if (p_pWege.empty()) {
-        throw std::runtime_error("Kreuzung::vAnnahme: keine abgehenden Wege");
-    }
-
-
     // erster abgehender Weg
-    auto ersterWeg = p_pWege.front();
-
-    // parkend auf den Weg: startzeit > aktuelle Zeit => parken
-    ersterWeg->vAnnahme(std::move(fzg), startzeit);
+    p_pWege.front()->vAnnahme(std::move(fzg), startzeit);
 }
 void Kreuzung::vSimulieren()
 {
-    for (auto& weg : p_pWege)
-    {
+    // 1) erst alle Wege simulieren
+    for (auto& weg : p_pWege) {
         weg->vSimulieren();
     }
-}
-std::shared_ptr<Weg> Kreuzung::pZufaelligerWeg(Weg& ankommenderWeg)
-{
-    // Rückweg des ankommenden Weges
-    auto rueck = ankommenderWeg.pRueckweg(); // shared_ptr via lock()
 
-    // Kandidaten: alle Wege außer rueck
-    std::vector<std::shared_ptr<Weg>> kandidaten;
-    for (auto& w : p_pWege)
-    {
-        if (!rueck || w != rueck)
-            kandidaten.push_back(w);
+    // 2) dann Status ausgeben (zeigt den Stand NACH dem Tick)
+    std::cout << "Wege Kreuzung " << getName() << "\n";
+    Weg::vKopf();
+    for (auto& weg : p_pWege) {
+        std::cout << *weg << "\n";
     }
-
-    // Sackgasse: keine Alternative -> Rückweg nehmen
-    if (kandidaten.empty())
-    {
-        return rueck;
-    }
-
-    // Zufall
-    static std::mt19937 rng{ std::random_device{}() };
-    std::uniform_int_distribution<size_t> dist(0, kandidaten.size() - 1);
-    return kandidaten[dist(rng)];
 }
+std::shared_ptr<Weg> Kreuzung::pZufaelligerWeg(Weg& herkunft) {
+    if (p_pWege.empty()) throw std::runtime_error("Kreuzung hat keine Wege: " + getName());
+
+    if (p_pWege.size() == 1) return p_pWege.front();
+
+    auto rueck = herkunft.pRueckweg();
+
+    std::vector<std::shared_ptr<Weg>> cand;
+    for (auto& w : p_pWege) {
+        if (rueck && w == rueck) continue; // nicht zurück
+        cand.push_back(w);
+    }
+    if (cand.empty()) return rueck ? rueck : p_pWege.front();
+
+    static std::mt19937 rng{std::random_device{}()};
+    std::uniform_int_distribution<size_t> dist(0, cand.size() - 1);
+    return cand[dist(rng)];
+}
+
 
 //    void vKreuzung::Tanken(Fahrzeug& fzg);
 //

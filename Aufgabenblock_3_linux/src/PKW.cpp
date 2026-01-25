@@ -37,24 +37,34 @@ double PKW::dTanken(double dMenge) {
 }
 
 void PKW::vSimulieren() {
-	double dOldAbschnitt = p_dAbschnittStrecke;
+    const double oldAbschnitt = p_dAbschnittStrecke;
 
-	Fahrzeug::vSimulieren();
+    Fahrzeug::vSimulieren();
 
+    double deltaS = p_dAbschnittStrecke - oldAbschnitt;
 
-	// Spritt Verbrauch (OLD IMPLEMENTATION)
-	double deltaS = p_dAbschnittStrecke - dOldAbschnitt;
-	if (deltaS > 0.0) {
-		double dVerbraucht = deltaS * (p_dVerbrauch / 100.0);
-		p_dTankinhalt -= dVerbraucht;
-		if (lessOrEqual(p_dTankinhalt, 0.0)) {
+    // <<< FIX: wenn Abschnitt zurückgesetzt wurde (Wegwechsel), dann
+    // ist "deltaS" negativ, obwohl evtl. Strecke gefahren wurde.
+    // In dem Fall nehmen wir einfach die neue Abschnittsstrecke als delta.
+    if (deltaS < 0.0) {
+        deltaS = p_dAbschnittStrecke;
+    }
 
-			p_dTankinhalt = 0.0;
-//			throw LiegenGebliebenFahrausnahme(*this, *p_pVerhalten->getWeg());
-			vWechsleZuParken(p_pVerhalten->getWeg(), 0);
-		}
-//			throw FIXME ?
-	}
+    if (deltaS > 0.0) {
+        const double verbraucht = deltaS * (p_dVerbrauch / 100.0);
+        p_dTankinhalt -= verbraucht;
+
+        if (p_dTankinhalt <= 0.0) {
+            p_dTankinhalt = 0.0;
+
+            // <<< wichtig: NICHT p_pVerhalten->getWeg() benutzen, wenn Verhalten evtl. schon gewechselt hat
+            // Besser: aktuellen Weg vom Verhalten nehmen, aber nur wenn vorhanden:
+            Weg* weg = p_pVerhalten ? p_pVerhalten->getWeg() : nullptr;
+            if (!weg) throw std::runtime_error("PKW::vSimulieren: kein Weg beim Liegenbleiben");
+
+            vWechsleZuParken(weg, 0.0);
+        }
+    }
 }
 
 void PKW::vAusgeben(std::ostream &os) const {

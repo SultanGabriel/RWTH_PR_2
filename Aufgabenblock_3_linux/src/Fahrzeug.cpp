@@ -122,25 +122,43 @@ void Fahrzeug::vSimulieren() {
 }
 
 double Fahrzeug::dTanken(double dMenge) {
-	return 0.0; // Stub
+	return 0.0; // Stub FIXME???
 }
 
-void Fahrzeug::vNeueStrecke(Weg *weg) {
-	p_pVerhalten = std::make_unique<FahrenVerhalten>(weg);
-	p_dAbschnittStrecke = 0;
+//void Fahrzeug::vNeueStrecke(Weg *weg) {
+//	p_pVerhalten = std::make_unique<FahrenVerhalten>(weg);
+//	p_dAbschnittStrecke = 0;
+//
+//}
+//
+//void Fahrzeug::vNeueStrecke(Weg *weg, double startzeit) {
+//	p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
+//	p_dAbschnittStrecke = 0;
+//}
 
+void Fahrzeug::vNeueStrecke(Weg *weg) {
+	if (!weg)
+		throw std::runtime_error("Fahrzeug::vNeueStrecke: weg nullptr");
+
+	p_pVerhalten = std::make_unique<FahrenVerhalten>(weg);
+	p_dAbschnittStrecke = 0.0;
 }
 
 void Fahrzeug::vNeueStrecke(Weg *weg, double startzeit) {
-	p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
-	p_dAbschnittStrecke = 0;
-}
+	if (!weg)
+		throw std::runtime_error(
+				"Fahrzeug::vNeueStrecke(parkend): weg nullptr");
 
+	p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
+	p_dAbschnittStrecke = 0.0;
+}
 VerhaltenTyp Fahrzeug::tVerhaltenTyp() {
 	return p_pVerhalten->tVerhaltenTyp();
 }
 void Fahrzeug::vWechsleZuParken(Weg *weg, double startzeit) {
 	p_pVerhalten = std::make_unique<ParkenVerhalten>(weg, startzeit);
+
+	std::cout << "[WECHSEL] " << getName() << std::endl;
 	// bewusst KEIN Reset von p_dAbschnittStrecke
 
 }

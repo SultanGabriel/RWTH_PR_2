@@ -9,18 +9,12 @@
 #include "../Fahrzeug.h"
 #include "../Weg.h"
 
+#include <iostream>
+
 void LosfahrenFahrausnahme::vBearbeiten() {
-	std::cout << "[AUSNAHME] [Losfahren] " << p_rFahrzeug.getName()
-			<< " auf Weg " << p_rWeg.getName() << std::endl;
-
-	// Fahrzeug aus dem alten weg abgeben
-	auto ptr = p_rWeg.pAbgabe(p_rFahrzeug);
-
-	// Wenn fahrzeug gefunden wurde
-	if (ptr) {
-		ptr->vNeueStrecke(&p_rWeg);
-
-		p_rWeg.vAnnahme(std::move(ptr));
-	}
-
+    std::cout << "[AUSNAHME] [Losfahren] "
+              << p_rFahrzeug.getName()
+              << " auf Weg " << p_rWeg.getName()
+              << std::endl;
+   p_rFahrzeug.vNeueStrecke(&p_rWeg);
 }
